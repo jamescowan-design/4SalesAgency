@@ -406,3 +406,20 @@ export type InsertAuditLog = typeof auditLogs.$inferInsert;
 
 export type ErrorLog = typeof errorLogs.$inferSelect;
 export type InsertErrorLog = typeof errorLogs.$inferInsert;
+
+// ============================================================================
+// API SETTINGS TABLE
+// ============================================================================
+
+export const apiSettings = mysqlTable("api_settings", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  section: varchar("section", { length: 100 }).notNull(), // email, twilio, vapi, etc.
+  key: varchar("key", { length: 100 }).notNull(), // smtpHost, twilioAccountSid, etc.
+  value: text("value").notNull(), // The actual API key or setting value
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ApiSetting = typeof apiSettings.$inferSelect;
+export type InsertApiSetting = typeof apiSettings.$inferInsert;

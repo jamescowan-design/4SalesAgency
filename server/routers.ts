@@ -2,6 +2,8 @@ import { z } from "zod";
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
+import { settingsRouter } from "./trpc/routers/settings";
+import { emailsRouter } from "./trpc/routers/emails";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import * as db from "./db";
@@ -86,6 +88,8 @@ const createActivitySchema = z.object({
 
 export const appRouter = router({
   system: systemRouter,
+  settings: settingsRouter,
+  emails: emailsRouter,
   
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),

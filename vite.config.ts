@@ -36,6 +36,10 @@ export default defineConfig({
       "localhost",
       "127.0.0.1",
     ],
+    watch: {
+      ignored: ['**/node_modules/**', '**/.git/**'],
+      usePolling: false,
+    },
     fs: {
       strict: true,
       deny: ["**/.*"],

@@ -4,13 +4,14 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import Home from "./pages/Home";
-import ClientsList from "./pages/ClientsList";
-import ClientDetail from "./pages/ClientDetail";
-import CampaignDetail from "./pages/CampaignDetail";
-import LeadsList from "./pages/LeadsList";
-import LeadDetail from "./pages/LeadDetail";
-import EmailComposer from "./pages/EmailComposer";
+import Home from "@/pages/Home";
+import ClientsList from "@/pages/ClientsList";
+import ClientDetail from "@/pages/ClientDetail";
+import CampaignDetail from "@/pages/CampaignDetail";
+import LeadsList from "@/pages/LeadsList";
+import LeadDetail from "@/pages/LeadDetail";
+import EmailComposer from "@/pages/EmailComposer";
+import Settings from "@/pages/Settings";
 
 function Router() {
   return (
@@ -22,6 +23,7 @@ function Router() {
       <Route path="/campaigns/:campaignId/leads" component={LeadsList} />
       <Route path="/leads/:id" component={LeadDetail} />
       <Route path="/leads/:leadId/email/:campaignId" component={EmailComposer} />
+      <Route path="/settings" component={Settings} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
