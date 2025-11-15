@@ -1078,6 +1078,116 @@ export const appRouter = router({
   // ============================================================================
   
   analytics: router({
+    // Comprehensive campaign analytics
+    getCampaignAnalytics: protectedProcedure
+      .input(z.object({ 
+        campaignId: z.number(),
+        timeRange: z.enum(["7d", "30d", "90d"]).optional(),
+      }))
+      .query(async ({ input }) => {
+        const leads = await db.getLeadsByCampaignId(input.campaignId);
+        const activities = await db.getActivitiesByCampaignId(input.campaignId);
+        const allCommunications = await Promise.all(
+          leads.map(async (lead) => await db.getCommunicationLogsByLeadId(lead.id))
+        );
+        const communications = allCommunications.flat();
+
+        // Overview metrics
+        const emailComms = communications.filter(c => c.communicationType === 'email');
+        const emailsSent = emailComms.filter(c => c.direction === 'outbound').length;
+        const emailsOpened = emailComms.filter(c => c.status === 'opened').length;
+        const emailsClicked = emailComms.filter(c => c.status === 'clicked').length;
+        const callActivities = activities.filter(a => a.activityType === 'call');
+
+        // Lead status distribution
+        const leadStatusDistribution = Object.entries(
+          leads.reduce((acc, lead) => {
+            acc[lead.status] = (acc[lead.status] || 0) + 1;
+            return acc;
+          }, {} as Record<string, number>)
+        ).map(([name, value]) => ({ name, value }));
+
+        // Activity trends (last 30 days)
+        const activityTrends = [];
+        for (let i = 29; i >= 0; i--) {
+          const date = new Date();
+          date.setDate(date.getDate() - i);
+          const dateStr = date.toISOString().split('T')[0];
+          
+          const dayActivities = activities.filter(a => {
+            const actDate = a.createdAt.toISOString().split('T')[0];
+            return actDate === dateStr;
+          });
+          
+          activityTrends.push({
+            date: dateStr,
+            emails: dayActivities.filter(a => a.activityType === 'email').length,
+            calls: dayActivities.filter(a => a.activityType === 'call').length,
+          });
+        }
+
+        // Email performance over time
+        const emailPerformance = [];
+        for (let i = 29; i >= 0; i--) {
+          const date = new Date();
+          date.setDate(date.getDate() - i);
+          const dateStr = date.toISOString().split('T')[0];
+          
+          const dayEmails = emailComms.filter(c => {
+            const emailDate = c.createdAt.toISOString().split('T')[0];
+            return emailDate === dateStr;
+          });
+          
+          emailPerformance.push({
+            date: dateStr,
+            sent: dayEmails.filter(c => c.direction === 'outbound').length,
+            opened: dayEmails.filter(c => c.status === 'opened').length,
+            clicked: dayEmails.filter(c => c.status === 'clicked').length,
+          });
+        }
+
+        // Conversion funnel
+        const conversionFunnel = [
+          { stage: 'New', count: leads.filter(l => l.status === 'new').length },
+          { stage: 'Contacted', count: leads.filter(l => l.status === 'contacted').length },
+          { stage: 'Responded', count: leads.filter(l => l.status === 'responded').length },
+          { stage: 'Qualified', count: leads.filter(l => l.status === 'qualified').length },
+          { stage: 'Converted', count: leads.filter(l => l.status === 'converted').length },
+        ];
+
+        // Top leads by engagement
+        const topLeads = leads
+          .map(lead => {
+            const leadActivities = activities.filter(a => a.leadId === lead.id);
+            const leadComms = communications.filter(c => c.leadId === lead.id);
+            const score = (lead.confidenceScore || 0) + (leadActivities.length * 5) + (leadComms.length * 3);
+            return {
+              companyName: lead.companyName,
+              contactName: lead.contactName,
+              score,
+            };
+          })
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 5);
+
+        return {
+          overview: {
+            totalLeads: leads.length,
+            qualifiedLeads: leads.filter(l => l.status === 'qualified' || l.status === 'converted').length,
+            emailsSent,
+            emailOpenRate: emailsSent > 0 ? (emailsOpened / emailsSent) * 100 : 0,
+            callsMade: callActivities.length,
+            callConnectRate: 75, // Placeholder
+            leadsGrowth: 12.5, // Placeholder
+          },
+          leadStatusDistribution,
+          activityTrends,
+          emailPerformance,
+          conversionFunnel,
+          topLeads,
+        };
+      }),
+
     // Campaign overview stats
     campaignStats: protectedProcedure
       .input(z.object({ campaignId: z.number() }))

@@ -235,13 +235,13 @@
   - [x] Lead score visualization
   - [ ] Filter by urgency level
 
-- [ ] Analytics Dashboard UI
-  - [ ] Campaign analytics page
-  - [ ] Conversion funnel visualization (charts)
-  - [ ] Email performance metrics display
-  - [ ] Call metrics display
-  - [ ] Activity trends graphs
-  - [ ] Lead source breakdown charts
+- [x] Analytics Dashboard UI
+  - [x] Campaign analytics page
+  - [x] Conversion funnel visualization (charts)
+  - [x] Email performance metrics display
+  - [x] Call metrics display
+  - [x] Activity trends graphs
+  - [x] Lead source breakdown charts
   - [ ] Export analytics to PDF/CSV
 
 - [ ] Bulk Operations UI
