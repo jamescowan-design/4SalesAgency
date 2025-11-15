@@ -109,9 +109,9 @@ export default function Sidebar() {
               return (
                 <li key={item.path}>
                   <Link href={item.path}>
-                    <a
+                    <span
                       onClick={closeMobileMenu}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors cursor-pointer ${
                         isActive
                           ? "bg-blue-50 text-blue-700 font-medium"
                           : "text-slate-700 hover:bg-slate-50"
@@ -119,7 +119,7 @@ export default function Sidebar() {
                     >
                       {item.icon}
                       <span>{item.label}</span>
-                    </a>
+                    </span>
                   </Link>
                 </li>
               );

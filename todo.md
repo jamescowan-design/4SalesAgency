@@ -232,3 +232,14 @@ See `API_KEYS_REQUIRED.md` for detailed setup instructions.
 
 ## Bug Fixes
 - [x] Fix Vite server.allowedHosts configuration for Manus sandbox access
+
+## Critical Bugs
+- [x] Fix OAuth callback failure error preventing user login (database tables created)
+
+- [x] Fix database schema mismatch - clients table missing columns (address, status, etc.)
+- [ ] Fix 9 errors showing on the page (need to verify after table creation)
+
+- [x] Fix productKnowledge.getByCampaign query returning undefined
+- [x] Fix nested <a> tags in React components (Sidebar, Breadcrumb)
+- [x] Fix WebSocket connection error (non-critical, HMR disabled)
+- [x] Fix auditLogs table missing resourceType and resourceId columns
