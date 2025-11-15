@@ -1,1 +1,0 @@
-DROP TABLE `api_key_audit_log`;

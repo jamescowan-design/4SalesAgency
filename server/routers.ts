@@ -7,6 +7,7 @@ import { emailsRouter } from "./trpc/routers/emails";
 import { callRecordingsRouter } from "./trpc/routers/callRecordings";
 import { emailCampaignsRouter } from "./trpc/routers/emailCampaigns";
 import { voiceCallingRouter } from "./trpc/routers/voiceCalling";
+import { gdprRouter } from "./trpc/routers/gdpr";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import * as db from "./db";
@@ -96,6 +97,7 @@ export const appRouter = router({
   callRecordings: callRecordingsRouter,
   emailCampaigns: emailCampaignsRouter,
   voiceCalling: voiceCallingRouter,
+  gdpr: gdprRouter,
   
   workflows: router({
     list: protectedProcedure

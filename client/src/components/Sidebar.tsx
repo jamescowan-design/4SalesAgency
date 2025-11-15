@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   Users,
+  Shield,
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
@@ -36,6 +37,7 @@ const navItems: NavItem[] = [
   { label: "Voice Calling", path: "/voice", icon: <Phone className="h-5 w-5" /> },
   { label: "Attribution", path: "/attribution", icon: <GitBranch className="h-5 w-5" /> },
   { label: "Enrichment", path: "/enrichment", icon: <Sparkles className="h-5 w-5" /> },
+  { label: "GDPR Compliance", path: "/gdpr", icon: <Shield className="h-5 w-5" /> },
   { label: "Settings", path: "/settings", icon: <Settings className="h-5 w-5" /> },
 ];
 

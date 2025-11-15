@@ -532,3 +532,38 @@ export type InsertEmailSequenceStep = typeof emailSequenceSteps.$inferInsert;
 export type EmailSequenceEnrollment = typeof emailSequenceEnrollments.$inferSelect;
 export type InsertEmailSequenceEnrollment = typeof emailSequenceEnrollments.$inferInsert;
 
+
+// ============================================================================
+// GDPR COMPLIANCE
+// ============================================================================
+
+export const consentRecords = mysqlTable("consentRecords", {
+  id: int("id").autoincrement().primaryKey(),
+  leadId: int("leadId").references(() => leads.id, { onDelete: "cascade" }),
+  consentType: mysqlEnum("consentType", ["email", "phone", "sms", "data_processing"]).notNull(),
+  consented: boolean("consented").notNull(),
+  consentedAt: timestamp("consentedAt").defaultNow().notNull(),
+  ipAddress: varchar("ipAddress", { length: 45 }),
+  userAgent: text("userAgent"),
+  withdrawnAt: timestamp("withdrawnAt"),
+  notes: text("notes"),
+});
+
+export const deletionRequests = mysqlTable("deletionRequests", {
+  id: int("id").autoincrement().primaryKey(),
+  leadId: int("leadId").references(() => leads.id, { onDelete: "set null" }),
+  requestedBy: int("requestedBy").references(() => users.id),
+  requestedAt: timestamp("requestedAt").defaultNow().notNull(),
+  status: mysqlEnum("status", ["pending", "approved", "completed", "rejected"]).default("pending").notNull(),
+  processedAt: timestamp("processedAt"),
+  processedBy: int("processedBy").references(() => users.id),
+  reason: text("reason"),
+  leadEmail: varchar("leadEmail", { length: 320 }), // Store email before deletion
+  leadName: varchar("leadName", { length: 255 }), // Store name before deletion
+  notes: text("notes"),
+});
+
+export type ConsentRecord = typeof consentRecords.$inferSelect;
+export type InsertConsentRecord = typeof consentRecords.$inferInsert;
+export type DeletionRequest = typeof deletionRequests.$inferSelect;
+export type InsertDeletionRequest = typeof deletionRequests.$inferInsert;

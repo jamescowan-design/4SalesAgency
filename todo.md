@@ -331,3 +331,13 @@
 - [x] Implement audit logging for API key access and modifications
 - [x] Mask API keys utility function available
 - [x] Support for ENCRYPTION_MASTER_KEY environment variable
+
+## GDPR Compliance Tools
+- [x] Consent management database schema
+- [x] Deletion requests tracking table
+- [x] Data export functionality (download all personal data as JSON/CSV)
+- [x] Right to be forgotten (anonymize/delete user data)
+- [x] Consent tracking and management UI
+- [x] Privacy dashboard showing data usage
+- [x] Audit trail for GDPR operations
+- [ ] Email notification for deletion requests (optional)
