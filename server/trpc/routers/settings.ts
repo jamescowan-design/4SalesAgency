@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { router, protectedProcedure } from "../../_core/trpc";
+import { adminProcedure } from "../../_core/adminProcedure";
 import { getDb } from "../../db";
 import { apiSettings } from "../../../drizzle/schema";
 import { eq, and } from "drizzle-orm";

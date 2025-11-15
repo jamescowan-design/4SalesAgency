@@ -457,3 +457,77 @@ export type InsertWorkflow = typeof workflows.$inferInsert;
 
 export type WorkflowExecution = typeof workflowExecutions.$inferSelect;
 export type InsertWorkflowExecution = typeof workflowExecutions.$inferInsert;
+
+export const callRecordings = mysqlTable("callRecordings", {
+  id: int("id").autoincrement().primaryKey(),
+  campaignId: int("campaignId").notNull(),
+  userId: int("userId").notNull(), // Who uploaded it
+  fileName: varchar("fileName", { length: 255 }).notNull(),
+  fileUrl: text("fileUrl").notNull(), // S3 URL
+  fileSize: int("fileSize"), // bytes
+  duration: int("duration"), // seconds
+  transcriptText: text("transcriptText"), // Extracted transcript
+  transcriptStatus: mysqlEnum("transcriptStatus", ["pending", "processing", "completed", "failed"]).default("pending"),
+  metadata: json("metadata"), // Additional data (speaker labels, timestamps, etc.)
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CallRecording = typeof callRecordings.$inferSelect;
+export type InsertCallRecording = typeof callRecordings.$inferInsert;
+
+export const emailVariants = mysqlTable("emailVariants", {
+  id: int("id").autoincrement().primaryKey(),
+  campaignId: int("campaignId").notNull(),
+  variantName: varchar("variantName", { length: 100 }).notNull(), // "A", "B", "C", etc.
+  subjectLine: text("subjectLine").notNull(),
+  emailBody: text("emailBody").notNull(),
+  sentCount: int("sentCount").default(0).notNull(),
+  openedCount: int("openedCount").default(0).notNull(),
+  clickedCount: int("clickedCount").default(0).notNull(),
+  repliedCount: int("repliedCount").default(0).notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const emailSequences = mysqlTable("emailSequences", {
+  id: int("id").autoincrement().primaryKey(),
+  campaignId: int("campaignId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const emailSequenceSteps = mysqlTable("emailSequenceSteps", {
+  id: int("id").autoincrement().primaryKey(),
+  sequenceId: int("sequenceId").notNull(),
+  stepNumber: int("stepNumber").notNull(), // 1, 2, 3, etc.
+  delayDays: int("delayDays").notNull(), // Days after previous step (0 for first step)
+  subjectLine: text("subjectLine").notNull(),
+  emailBody: text("emailBody").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const emailSequenceEnrollments = mysqlTable("emailSequenceEnrollments", {
+  id: int("id").autoincrement().primaryKey(),
+  sequenceId: int("sequenceId").notNull(),
+  leadId: int("leadId").notNull(),
+  currentStep: int("currentStep").default(0).notNull(), // 0 = not started, 1 = step 1, etc.
+  status: mysqlEnum("status", ["active", "paused", "completed", "cancelled"]).default("active").notNull(),
+  enrolledAt: timestamp("enrolledAt").defaultNow().notNull(),
+  lastEmailSentAt: timestamp("lastEmailSentAt"),
+  completedAt: timestamp("completedAt"),
+});
+
+export type EmailVariant = typeof emailVariants.$inferSelect;
+export type InsertEmailVariant = typeof emailVariants.$inferInsert;
+export type EmailSequence = typeof emailSequences.$inferSelect;
+export type InsertEmailSequence = typeof emailSequences.$inferInsert;
+export type EmailSequenceStep = typeof emailSequenceSteps.$inferSelect;
+export type InsertEmailSequenceStep = typeof emailSequenceSteps.$inferInsert;
+export type EmailSequenceEnrollment = typeof emailSequenceEnrollments.$inferSelect;
+export type InsertEmailSequenceEnrollment = typeof emailSequenceEnrollments.$inferInsert;

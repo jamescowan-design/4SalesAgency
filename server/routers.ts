@@ -4,6 +4,8 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { settingsRouter } from "./trpc/routers/settings";
 import { emailsRouter } from "./trpc/routers/emails";
+import { callRecordingsRouter } from "./trpc/routers/callRecordings";
+import { emailCampaignsRouter } from "./trpc/routers/emailCampaigns";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import * as db from "./db";
@@ -90,6 +92,8 @@ export const appRouter = router({
   system: systemRouter,
   settings: settingsRouter,
   emails: emailsRouter,
+  callRecordings: callRecordingsRouter,
+  emailCampaigns: emailCampaignsRouter,
   
   workflows: router({
     list: protectedProcedure

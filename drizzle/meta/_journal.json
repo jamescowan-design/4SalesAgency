@@ -22,6 +22,20 @@
       "when": 1763209329859,
       "tag": "0002_last_giant_girl",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1763213012343,
+      "tag": "0003_breezy_sage",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1763213165731,
+      "tag": "0004_dashing_maverick",
+      "breakpoints": true
     }
   ]
 }
