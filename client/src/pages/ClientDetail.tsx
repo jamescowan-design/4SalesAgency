@@ -1,0 +1,24 @@
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
+import { Link, useParams } from "wouter";
+
+export default function ClientDetail() {
+  const params = useParams();
+  const clientId = params.id;
+
+  return (
+    <div className="min-h-screen bg-background">
+      <div className="container py-8">
+        <Link href="/clients">
+          <Button variant="ghost" className="mb-4">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Clients
+          </Button>
+        </Link>
+
+        <h1 className="text-4xl font-bold mb-8">Client Detail #{clientId}</h1>
+        <p className="text-muted-foreground">Coming soon...</p>
+      </div>
+    </div>
+  );
+}
