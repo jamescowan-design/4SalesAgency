@@ -18,8 +18,8 @@
 - [x] Campaign creation with ICP definition)
 - [x] Lead management backend procedures
 - [x] Client list page with create functionality
-- [ ] Campaign detail page (placeholder created)
-- [ ] Lead list page (placeholder created)
+- [x] Campaign detail page with Product Knowledge and document upload
+- [x] Lead list page with CRM dashboard, filters, and search
 - [ ] Lead detail page (placeholder created)
 - [ ] Breadcrumb navigation
 - [ ] Role-based access control
@@ -111,3 +111,11 @@
 - [ ] VITE_VAPI_API_KEY
 - [ ] VITE_ELEVENLABS_API_KEY
 - [ ] VITE_ASSEMBLYAI_API_KEY
+
+## New Features (User Requested)
+- [x] Complete Campaign detail page with full ICP configuration
+- [x] Product Knowledge upload interface with file management
+- [x] Lead management dashboard with filters and status updates
+- [x] Redesign UI for modern professional appearance (gradient backgrounds, modern cards, clean layouts)
+- [ ] Add AI email generation integration
+- [ ] Add AI voice calling integration
