@@ -9,9 +9,8 @@ import viteConfig from "../../vite.config";
 export async function setupVite(app: Express, server: Server) {
   const serverOptions = {
     middlewareMode: true,
-    hmr: false,
-    watch: null,
-    allowedHosts: true as const,
+    hmr: false, // Disabled due to file descriptor limits in sandbox
+    watch: null, // Disable file watching
   };
 
   const vite = await createViteServer({
