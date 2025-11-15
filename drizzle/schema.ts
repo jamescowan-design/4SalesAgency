@@ -531,3 +531,4 @@ export type EmailSequenceStep = typeof emailSequenceSteps.$inferSelect;
 export type InsertEmailSequenceStep = typeof emailSequenceSteps.$inferInsert;
 export type EmailSequenceEnrollment = typeof emailSequenceEnrollments.$inferSelect;
 export type InsertEmailSequenceEnrollment = typeof emailSequenceEnrollments.$inferInsert;
+

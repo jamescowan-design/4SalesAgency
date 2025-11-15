@@ -4,6 +4,8 @@ import { adminProcedure } from "../../_core/adminProcedure";
 import { getDb } from "../../db";
 import { apiSettings } from "../../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
+import { encrypt, decrypt, maskApiKey } from "../../services/encryption";
+import { logApiKeyRead, logApiKeyWrite, logApiKeyTest } from "../../services/auditLog";
 
 export const settingsRouter = router({
   get: protectedProcedure.query(async ({ ctx }) => {
@@ -17,7 +19,14 @@ export const settingsRouter = router({
 
     const settingsMap: Record<string, string> = {};
     settings.forEach(setting => {
-      settingsMap[setting.key] = setting.value;
+      // Decrypt values before returning
+      try {
+        settingsMap[setting.key] = decrypt(setting.value);
+        logApiKeyRead(ctx.user.id, setting.key);
+      } catch (error) {
+        // If decryption fails, value might be plain text (old data)
+        settingsMap[setting.key] = setting.value;
+      }
     });
 
     return settingsMap;
@@ -34,9 +43,12 @@ export const settingsRouter = router({
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
-      // Save each key-value pair
+      // Save each key-value pair with encryption
       for (const [key, value] of Object.entries(input.data)) {
         if (!value) continue; // Skip empty values
+
+        // Encrypt the value before storing
+        const encryptedValue = encrypt(value);
 
         // Check if setting exists
       const existing = await db
@@ -49,16 +61,18 @@ export const settingsRouter = router({
           // Update existing
           await db
             .update(apiSettings)
-            .set({ value })
+            .set({ value: encryptedValue })
             .where(eq(apiSettings.id, existing[0].id));
+          logApiKeyWrite(ctx.user.id, key, "update");
         } else {
           // Insert new
           await db.insert(apiSettings).values({
             userId: ctx.user.id,
             key,
-            value,
+            value: encryptedValue,
             section: input.section,
           });
+          logApiKeyWrite(ctx.user.id, key, "create");
         }
       }
 
@@ -83,8 +97,17 @@ export const settingsRouter = router({
 
       const settingsMap: Record<string, string> = {};
       settings.forEach(setting => {
-        settingsMap[setting.key] = setting.value;
+        // Decrypt values before using
+        try {
+          settingsMap[setting.key] = decrypt(setting.value);
+        } catch (error) {
+          // If decryption fails, value might be plain text (old data)
+          settingsMap[setting.key] = setting.value;
+        }
       });
+
+      // Log the test attempt
+      logApiKeyTest(ctx.user.id, input.service, true);
 
       // Test connection based on service
       if (input.service === "email") {
@@ -98,8 +121,10 @@ export const settingsRouter = router({
               },
             });
             if (response.ok) {
+              logApiKeyTest(ctx.user.id, "sendgrid", true);
               return { success: true, message: "SendGrid connection successful" };
             } else {
+              logApiKeyTest(ctx.user.id, "sendgrid", false, "Invalid API key");
               return { success: false, message: "SendGrid API key is invalid" };
             }
           } catch (error) {

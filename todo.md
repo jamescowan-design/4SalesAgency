@@ -321,3 +321,13 @@
 - [x] Update Settings UI with test buttons
 - [x] Add real-time status indicators (success/error/loading)
 - [x] Display response times and error messages
+
+## API Key Security Enhancement
+- [x] Implement AES-256-GCM encryption for API keys at rest
+- [x] Create encryption service with PBKDF2 key derivation (100,000 iterations)
+- [x] Encrypt API keys automatically on save
+- [x] Decrypt API keys automatically on read
+- [x] Add role-based access control (protectedProcedure for all settings)
+- [x] Implement audit logging for API key access and modifications
+- [x] Mask API keys utility function available
+- [x] Support for ENCRYPTION_MASTER_KEY environment variable
