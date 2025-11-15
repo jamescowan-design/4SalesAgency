@@ -252,3 +252,6 @@ See `API_KEYS_REQUIRED.md` for detailed setup instructions.
 ## Homepage Improvements
 - [x] Activate all homepage cards with proper navigation links
 - [x] Remove "Coming Soon" placeholders from Active Campaigns, Lead Dashboard, and Analytics cards
+
+## Settings Page Improvements
+- [x] Add OpenAI API key settings section for AI-powered features

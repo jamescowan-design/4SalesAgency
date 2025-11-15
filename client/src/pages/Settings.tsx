@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -41,9 +41,37 @@ export default function Settings() {
     // Email Verification
     zerobounceApiKey: "",
     neverbounceApiKey: "",
+    
+    // OpenAI Settings
+    openaiApiKey: "",
   });
 
   const { data: settings, refetch } = trpc.settings.get.useQuery();
+  
+  useEffect(() => {
+    if (settings) {
+      setFormData({
+        smtpHost: settings.smtpHost || "",
+        smtpPort: settings.smtpPort || "",
+        smtpUser: settings.smtpUser || "",
+        smtpPassword: settings.smtpPassword || "",
+        smtpFromEmail: settings.smtpFromEmail || "",
+        smtpFromName: settings.smtpFromName || "",
+        sendgridApiKey: settings.sendgridApiKey || "",
+        twilioAccountSid: settings.twilioAccountSid || "",
+        twilioAuthToken: settings.twilioAuthToken || "",
+        twilioPhoneNumber: settings.twilioPhoneNumber || "",
+        vapiApiKey: settings.vapiApiKey || "",
+        vapiAssistantId: settings.vapiAssistantId || "",
+        elevenlabsApiKey: settings.elevenlabsApiKey || "",
+        elevenlabsVoiceId: settings.elevenlabsVoiceId || "",
+        assemblyaiApiKey: settings.assemblyaiApiKey || "",
+        zerobounceApiKey: settings.zerobounceApiKey || "",
+        neverbounceApiKey: settings.neverbounceApiKey || "",
+        openaiApiKey: settings.openaiApiKey || "",
+      });
+    }
+  }, [settings]);
   const saveSettings = trpc.settings.save.useMutation({
     onSuccess: () => {
       toast.success("Settings saved successfully");
@@ -108,6 +136,8 @@ export default function Settings() {
     } else if (section === "verification") {
       sectionData.zerobounceApiKey = formData.zerobounceApiKey;
       sectionData.neverbounceApiKey = formData.neverbounceApiKey;
+    } else if (section === "openai") {
+      sectionData.openaiApiKey = formData.openaiApiKey;
     }
 
     saveSettings.mutate({ section, data: sectionData });
@@ -159,8 +189,9 @@ export default function Settings() {
           </p>
         </div>
 
-        <Tabs defaultValue="email" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7">
+        <Tabs defaultValue="openai" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-8">
+            <TabsTrigger value="openai">OpenAI</TabsTrigger>
             <TabsTrigger value="email">Email</TabsTrigger>
             <TabsTrigger value="twilio">Twilio</TabsTrigger>
             <TabsTrigger value="vapi">VAPI</TabsTrigger>
@@ -169,6 +200,55 @@ export default function Settings() {
             <TabsTrigger value="verification">Verification</TabsTrigger>
             <TabsTrigger value="scraper">Web Scraper</TabsTrigger>
           </TabsList>
+
+          {/* OpenAI Settings */}
+          <TabsContent value="openai">
+            <Card>
+              <CardHeader>
+                <CardTitle>OpenAI Configuration</CardTitle>
+                <CardDescription>
+                  Configure OpenAI API for AI-powered email generation, lead qualification, and content analysis
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {renderKeyField(
+                  "openaiApiKey",
+                  "OpenAI API Key",
+                  "sk-...",
+                  formData.openaiApiKey,
+                  (value) => setFormData({ ...formData, openaiApiKey: value })
+                )}
+                
+                <div className="flex items-center gap-2 pt-4">
+                  <Button onClick={() => handleSave("openai")} disabled={saveSettings.isPending}>
+                    <Save className="mr-2 h-4 w-4" />
+                    {saveSettings.isPending ? "Saving..." : "Save OpenAI Settings"}
+                  </Button>
+                  <TestConnectionButton
+                    service="openai"
+                    onTest={handleTestConnection}
+                    isPending={testConnection.isPending}
+                    currentService={testConnection.variables?.service}
+                    result={testResults.openai}
+                  />
+                </div>
+
+                <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <h4 className="font-semibold text-blue-900 mb-2">How to get your OpenAI API Key:</h4>
+                  <ol className="list-decimal list-inside space-y-1 text-sm text-blue-800">
+                    <li>Go to <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="underline">platform.openai.com/api-keys</a></li>
+                    <li>Sign in or create an account</li>
+                    <li>Click "Create new secret key"</li>
+                    <li>Copy the key and paste it above</li>
+                    <li>Note: Keys start with "sk-"</li>
+                  </ol>
+                  <p className="text-sm text-blue-700 mt-3">
+                    <strong>Pricing:</strong> Pay-as-you-go starting at $0.002 per 1K tokens (~750 words). Most operations cost $0.01-0.05.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* Email Settings */}
           <TabsContent value="email">
