@@ -1,0 +1,64 @@
+{
+  "query": "SELECT * FROM api_settings WHERE userId = 1 LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user gQLdwmQR2CkHDhx.root --database HEwQZPe6tN6hjD39wVLsft --execute SELECT * FROM api_settings WHERE userId = 1 LIMIT 20;",
+  "rows": [
+    {
+      "id": "1",
+      "userId": "1",
+      "section": "twilio",
+      "key": "twilioAccountSid",
+      "value": "XExywdIPa00xTER4c5YvvRXds74ykyBAYC5D60EwxQ4sINhVyY5lRZ0kvbRr36jUGXMD1gu6O/dMx0jYZyhKZQWxcn8X++NBvkWizaDOA9dEFIo4d8M25jSiTQFlIrJTf28=",
+      "createdAt": "2025-11-15 16:29:45",
+      "updatedAt": "2025-11-15 16:29:45"
+    },
+    {
+      "id": "2",
+      "userId": "1",
+      "section": "twilio",
+      "key": "twilioAuthToken",
+      "value": "CumjJDKYEqOxQF3CJAoo7SRlUxPI2lM5MutWmLPgEJKcXWvov8W2WmxWivzW33rygir68c7M96mRrIqJnsAcg5OMa351oZNb9/sPNQ0gOefju2g463RvixVL4vnGf38j",
+      "createdAt": "2025-11-15 16:29:45",
+      "updatedAt": "2025-11-15 16:29:45"
+    },
+    {
+      "id": "3",
+      "userId": "1",
+      "section": "twilio",
+      "key": "twilioPhoneNumber",
+      "value": "3+h4wuNyJfK0pC+qECBoLXjrilzTv2MLpXYoZu1xvDQaXFApZTA7/Fmz8jgX1khSiK2f9mUnQDqswNCJbaexfNa8BHiQItE96wgv9Ic=",
+      "createdAt": "2025-11-15 16:29:45",
+      "updatedAt": "2025-11-15 16:29:45"
+    },
+    {
+      "id": "4",
+      "userId": "1",
+      "section": "vapi",
+      "key": "vapiApiKey",
+      "value": "xBd+ZsK03ICFDExs7EGRGwtSQvbRwRJVPh5hVwPtD+eee4/qwaTFQNFYVcrxYj/ZNnxRKK0aiyI2CLhxos1NP69ULhWvD/JNZLpBaePR4GnFv5pZvg/3aRmP+D8nIFwJaN54hg==",
+      "createdAt": "2025-11-15 16:30:28",
+      "updatedAt": "2025-11-15 16:30:28"
+    },
+    {
+      "id": "5",
+      "userId": "1",
+      "section": "elevenlabs",
+      "key": "elevenlabsApiKey",
+      "value": "W6VYMLZoshh4aV3PEUvyrdEBT/70anmzbxtR/j0kN+/4Yn+3f9LGRVFgLz0oLsv6/a+KSoT8hnoAXrAoZR1b+Hd7x/OQcQ6xocuDDQgB6fHx8uRV+MpnCj4BXEFCqOESc5C9NJ5F4CQkizucWGKO0KUxrFND+wtwWWTbXGZJOX0=",
+      "createdAt": "2025-11-15 16:31:38",
+      "updatedAt": "2025-11-15 16:31:38"
+    },
+    {
+      "id": "6",
+      "userId": "1",
+      "section": "assemblyai",
+      "key": "assemblyaiApiKey",
+      "value": "F5V/3rbzJfaXh6bDk/PEK4H6tb4ODDCzQgjvCdXzore7pz4RsX2G2B2YnRa5iApotjECjKsTSIOnGDdxpaMjz/z36ArEH/Jzmarmynov8zYAOkFsqX0RMYir8hfcKVm8",
+      "createdAt": "2025-11-15 16:32:50",
+      "updatedAt": "2025-11-15 16:32:50"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\tuserId\tsection\tkey\tvalue\tcreatedAt\tupdatedAt\n1\t1\ttwilio\ttwilioAccountSid\tXExywdIPa00xTER4c5YvvRXds74ykyBAYC5D60EwxQ4sINhVyY5lRZ0kvbRr36jUGXMD1gu6O/dMx0jYZyhKZQWxcn8X++NBvkWizaDOA9dEFIo4d8M25jSiTQFlIrJTf28=\t2025-11-15 16:29:45\t2025-11-15 16:29:45\n2\t1\ttwilio\ttwilioAuthToken\tCumjJDKYEqOxQF3CJAoo7SRlUxPI2lM5MutWmLPgEJKcXWvov8W2WmxWivzW33rygir68c7M96mRrIqJnsAcg5OMa351oZNb9/sPNQ0gOefju2g463RvixVL4vnGf38j\t2025-11-15 16:29:45\t2025-11-15 16:29:45\n3\t1\ttwilio\ttwilioPhoneNumber\t3+h4wuNyJfK0pC+qECBoLXjrilzTv2MLpXYoZu1xvDQaXFApZTA7/Fmz8jgX1khSiK2f9mUnQDqswNCJbaexfNa8BHiQItE96wgv9Ic=\t2025-11-15 16:29:45\t2025-11-15 16:29:45\n4\t1\tvapi\tvapiApiKey\txBd+ZsK03ICFDExs7EGRGwtSQvbRwRJVPh5hVwPtD+eee4/qwaTFQNFYVcrxYj/ZNnxRKK0aiyI2CLhxos1NP69ULhWvD/JNZLpBaePR4GnFv5pZvg/3aRmP+D8nIFwJaN54hg==\t2025-11-15 16:30:28\t2025-11-15 16:30:28\n5\t1\televenlabs\televenlabsApiKey\tW6VYMLZoshh4aV3PEUvyrdEBT/70anmzbxtR/j0kN+/4Yn+3f9LGRVFgLz0oLsv6/a+KSoT8hnoAXrAoZR1b+Hd7x/OQcQ6xocuDDQgB6fHx8uRV+MpnCj4BXEFCqOESc5C9NJ5F4CQkizucWGKO0KUxrFND+wtwWWTbXGZJOX0=\t2025-11-15 16:31:38\t2025-11-15 16:31:38\n6\t1\tassemblyai\tassemblyaiApiKey\tF5V/3rbzJfaXh6bDk/PEK4H6tb4ODDCzQgjvCdXzore7pz4RsX2G2B2YnRa5iApotjECjKsTSIOnGDdxpaMjz/z36ArEH/Jzmarmynov8zYAOkFsqX0RMYir8hfcKVm8\t2025-11-15 16:32:50\t2025-11-15 16:32:50\n",
+  "stderr": "",
+  "execution_time_ms": 102
+}

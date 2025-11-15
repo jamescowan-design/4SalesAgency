@@ -224,6 +224,27 @@ export const settingsRouter = router({
         } catch (error) {
           return { success: false, message: "Failed to connect to AssemblyAI" };
         }
+      } else if (input.service === "openai") {
+        // Test OpenAI
+        if (!settingsMap.openaiApiKey) {
+          return { success: false, message: "OpenAI API key not set" };
+        }
+        try {
+          const response = await fetch("https://api.openai.com/v1/models", {
+            headers: {
+              Authorization: `Bearer ${settingsMap.openaiApiKey}`,
+            },
+          });
+          if (response.ok) {
+            return { success: true, message: "OpenAI connection successful" };
+          } else if (response.status === 401) {
+            return { success: false, message: "OpenAI API key is invalid" };
+          } else {
+            return { success: false, message: "Failed to connect to OpenAI" };
+          }
+        } catch (error) {
+          return { success: false, message: "Failed to connect to OpenAI" };
+        }
       }
 
       return { success: false, message: "Unknown service" };

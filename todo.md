@@ -255,3 +255,10 @@ See `API_KEYS_REQUIRED.md` for detailed setup instructions.
 
 ## Settings Page Improvements
 - [x] Add OpenAI API key settings section for AI-powered features
+
+## Critical Bugs - URGENT
+- [ ] OpenAI tab not showing in Settings page despite code changes
+- [ ] User's API settings deleted/not loading (SendGrid, Twilio, etc.)
+- [ ] Investigate why Settings page changes aren't taking effect
+
+- [x] Implement OpenAI test connection handler in backend settings router
