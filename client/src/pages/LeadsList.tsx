@@ -82,12 +82,10 @@ export default function LeadsList() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/10">
       <div className="container py-8">
-        <Link href={`/campaigns/${campaignId}`}>
-          <Button variant="ghost" className="mb-6">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Campaign
-          </Button>
-        </Link>
+        <Button variant="ghost" className="mb-6" onClick={() => window.location.href = `/campaigns/${campaignId}`}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Campaign
+        </Button>
 
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Leads</h1>

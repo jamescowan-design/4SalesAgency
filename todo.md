@@ -243,3 +243,8 @@ See `API_KEYS_REQUIRED.md` for detailed setup instructions.
 - [x] Fix nested <a> tags in React components (Sidebar, Breadcrumb)
 - [x] Fix WebSocket connection error (non-critical, HMR disabled)
 - [x] Fix auditLogs table missing resourceType and resourceId columns
+
+## New Errors to Fix
+- [x] Fix recruitmentSignals table missing userId column
+- [x] Fix productKnowledge query still returning undefined (changed to null)
+- [x] Fix remaining nested anchor tags in other pages (ClientsList, ClientDetail, CampaignDetail, EmailComposer, LeadsList)

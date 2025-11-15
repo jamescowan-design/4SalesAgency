@@ -1,0 +1,9 @@
+{
+  "query": "DROP TABLE IF EXISTS recruitmentSignals; CREATE TABLE recruitmentSignals (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  userId INT NOT NULL,\n  companyName VARCHAR(255) NOT NULL,\n  signalType ENUM('job_posting', 'funding', 'expansion', 'leadership_change') NOT NULL,\n  description TEXT NOT NULL,\n  source VARCHAR(255) NOT NULL,\n  sourceUrl TEXT,\n  urgency ENUM('low', 'medium', 'high') NOT NULL DEFAULT 'medium',\n  metadata JSON,\n  detectedAt TIMESTAMP NOT NULL,\n  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user gQLdwmQR2CkHDhx.root --database HEwQZPe6tN6hjD39wVLsft --execute DROP TABLE IF EXISTS recruitmentSignals; CREATE TABLE recruitmentSignals (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  userId INT NOT NULL,\n  companyName VARCHAR(255) NOT NULL,\n  signalType ENUM('job_posting', 'funding', 'expansion', 'leadership_change') NOT NULL,\n  description TEXT NOT NULL,\n  source VARCHAR(255) NOT NULL,\n  sourceUrl TEXT,\n  urgency ENUM('low', 'medium', 'high') NOT NULL DEFAULT 'medium',\n  metadata JSON,\n  detectedAt TIMESTAMP NOT NULL,\n  createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 485
+}

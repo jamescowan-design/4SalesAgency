@@ -96,9 +96,7 @@ export default function EmailComposer() {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-2">Lead not found</h2>
-          <Link href="/clients">
-            <Button>Back to Clients</Button>
-          </Link>
+          <Button onClick={() => window.location.href = '/clients'}>Back to Clients</Button>
         </div>
       </div>
     );
@@ -107,12 +105,10 @@ export default function EmailComposer() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/10">
       <div className="container py-8 max-w-4xl">
-        <Link href={`/leads/${leadId}`}>
-          <Button variant="ghost" className="mb-6">
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Lead
-          </Button>
-        </Link>
+        <Button variant="ghost" className="mb-6" onClick={() => window.location.href = `/leads/${leadId}`}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Back to Lead
+        </Button>
 
         <div className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Compose Email</h1>

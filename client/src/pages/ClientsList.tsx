@@ -64,12 +64,10 @@ export default function ClientsList() {
     <div className="min-h-screen bg-background">
       <div className="container py-8">
         <div className="mb-8">
-          <Link href="/">
-            <Button variant="ghost" className="mb-4">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Home
-            </Button>
-          </Link>
+          <Button variant="ghost" className="mb-4" onClick={() => window.location.href = '/'}>
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Home
+          </Button>
 
           <div className="flex items-center justify-between">
             <div>
