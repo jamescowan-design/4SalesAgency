@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
 import { Save, Eye, EyeOff } from "lucide-react";
 import { TestConnectionButton } from "@/components/TestConnectionButton";
+import ScraperSettings from "@/components/ScraperSettings";
 
 export default function Settings() {
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
@@ -159,13 +160,14 @@ export default function Settings() {
         </div>
 
         <Tabs defaultValue="email" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-6">
+          <TabsList className="grid w-full grid-cols-7">
             <TabsTrigger value="email">Email</TabsTrigger>
             <TabsTrigger value="twilio">Twilio</TabsTrigger>
             <TabsTrigger value="vapi">VAPI</TabsTrigger>
             <TabsTrigger value="elevenlabs">ElevenLabs</TabsTrigger>
             <TabsTrigger value="assemblyai">AssemblyAI</TabsTrigger>
             <TabsTrigger value="verification">Verification</TabsTrigger>
+            <TabsTrigger value="scraper">Web Scraper</TabsTrigger>
           </TabsList>
 
           {/* Email Settings */}
@@ -444,7 +446,12 @@ export default function Settings() {
             </Card>
           </TabsContent>
 
-          {/* Verification Settings */}
+          {/* Web Scraper Settings */}
+          <TabsContent value="scraper">
+            <ScraperSettings />
+          </TabsContent>
+
+          {/* Email Verification Settings */}
           <TabsContent value="verification">
             <Card>
               <CardHeader>
