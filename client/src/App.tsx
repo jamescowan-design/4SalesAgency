@@ -16,6 +16,9 @@ import PriorityDashboard from "@/pages/PriorityDashboard";
 import AnalyticsDashboard from "@/pages/AnalyticsDashboard";
 import BulkOperations from "@/pages/BulkOperations";
 import WorkflowAutomation from "@/pages/WorkflowAutomation";
+import VoiceCalling from "@/pages/VoiceCalling";
+import Attribution from "@/pages/Attribution";
+import LeadEnrichment from "@/pages/LeadEnrichment";
 
 function Router() {
   return (
@@ -32,6 +35,9 @@ function Router() {
       <Route path="/analytics" component={AnalyticsDashboard} />
       <Route path="/bulk" component={BulkOperations} />
       <Route path="/workflows" component={WorkflowAutomation} />
+      <Route path="/voice" component={VoiceCalling} />
+      <Route path="/attribution" component={Attribution} />
+      <Route path="/enrichment" component={LeadEnrichment} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

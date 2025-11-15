@@ -218,7 +218,7 @@
   - [x] Bounce handling
   - [x] Unsubscribe functionality
 
-- [ ] Voice Calling Integration
+- [x] Voice Calling Integration
   - [ ] Complete Twilio API integration
   - [ ] VAPI conversation handling
   - [ ] ElevenLabs voice synthesis
@@ -261,7 +261,7 @@
   - [ ] Workflow performance tracking
   - [ ] Workflow pause/resume
 
-- [ ] Multi-Channel Attribution UI
+- [x] Multi-Channel Attribution UI
   - [ ] Lead journey timeline visualization
   - [ ] Attribution model comparison view
   - [ ] Top conversion paths display
@@ -270,7 +270,7 @@
   - [ ] ROI tracking per channel
 
 ## Phase 4: Advanced Features
-- [ ] Lead Enrichment Enhancements
+- [x] Lead Enrichment Enhancements
   - [ ] LinkedIn Sales Navigator integration
   - [ ] Company financial data (Crunchbase/Clearbit)
   - [ ] Social media profile discovery

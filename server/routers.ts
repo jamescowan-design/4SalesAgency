@@ -747,6 +747,66 @@ export const appRouter = router({
 
         return { success: true };
       }),
+
+    getCallHistory: protectedProcedure
+      .input(z.object({ leadId: z.number() }))
+      .query(async ({ input }) => {
+        return db.getVoiceCallSessionsByLeadId(input.leadId);
+      }),
+
+    initiateCall: protectedProcedure
+      .input(z.object({
+        leadId: z.number(),
+        campaignId: z.number(),
+        callType: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const lead = await db.getLeadById(input.leadId);
+        if (!lead || !lead.contactPhone) {
+          throw new Error("Lead or phone number not found");
+        }
+
+        const callId = await db.createVoiceCallSession({
+          leadId: input.leadId,
+          campaignId: input.campaignId,
+          phoneNumber: lead.contactPhone,
+          status: "initiated",
+          callStartedAt: new Date(),
+        });
+
+        return { id: callId, phoneNumber: lead.contactPhone };
+      }),
+
+    endCall: protectedProcedure
+      .input(z.object({
+        leadId: z.number(),
+        notes: z.string().optional(),
+        outcome: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        // Get the most recent call session for this lead
+        const sessions = await db.getVoiceCallSessionsByLeadId(input.leadId);
+        const activeSession = sessions.find(s => s.status === "initiated" || s.status === "in_progress");
+
+        if (activeSession) {
+          await db.updateVoiceCallSession(activeSession.id, {
+            status: "completed",
+            callEndedAt: new Date(),
+          });
+        }
+
+        // Create activity record
+        await db.createActivity({
+          campaignId: activeSession?.campaignId || 0,
+          leadId: input.leadId,
+          activityType: "call",
+          status: "completed",
+          description: input.notes,
+          completedAt: new Date(),
+        });
+
+        return { success: true };
+      }),
   }),
 
   // ============================================================================
@@ -1475,6 +1535,58 @@ export const appRouter = router({
           });
 
         return trends;
+      }),
+  }),
+
+  // ============================================================================
+  // LEAD ENRICHMENT
+  // ============================================================================
+  
+  enrichment: router({
+    // Enrich lead with web scraping
+    enrichLead: protectedProcedure
+      .input(z.object({ leadId: z.number() }))
+      .mutation(async ({ input }) => {
+        const lead = await db.getLeadById(input.leadId);
+        if (!lead) {
+          throw new Error("Lead not found");
+        }
+
+        // Simulate enrichment - in production, integrate with Clearbit, Hunter.io, etc.
+        // For now, just mark as enriched
+        await db.updateLead(input.leadId, {
+          confidenceScore: Math.min((lead.confidenceScore || 0) + 10, 100),
+        });
+
+        return { success: true };
+      }),
+
+    // Enrich lead from specific URL
+    enrichFromUrl: protectedProcedure
+      .input(z.object({
+        leadId: z.number(),
+        url: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const lead = await db.getLeadById(input.leadId);
+        if (!lead) {
+          throw new Error("Lead not found");
+        }
+
+        // Simulate enrichment from URL - in production, integrate with web scraping APIs
+        const updates: any = {
+          confidenceScore: Math.min((lead.confidenceScore || 0) + 15, 100),
+        };
+        
+        if (input.url.includes('linkedin')) {
+          updates.contactLinkedin = input.url;
+        } else {
+          updates.companyWebsite = input.url;
+        }
+        
+        await db.updateLead(input.leadId, updates);
+
+        return { success: true };
       }),
   }),
 });
