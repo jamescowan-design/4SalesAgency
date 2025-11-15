@@ -367,6 +367,95 @@ export const appRouter = router({
 
         return { success: true };
       }),
+
+    getPriorityLeads: protectedProcedure
+      .input(z.object({ campaignId: z.number() }))
+      .query(async ({ input }) => {
+        const leads = await db.getLeadsByCampaignId(input.campaignId);
+        const activities = await db.getActivitiesByCampaignId(input.campaignId);
+        
+        // Calculate priority scores
+        const priorityLeads = leads
+          .filter(lead => lead.status !== "converted" && lead.status !== "rejected")
+          .map(lead => {
+            // Calculate days since last contact
+            const lastActivity = activities
+              .filter(a => a.leadId === lead.id)
+              .sort((a, b) => (b.completedAt?.getTime() || 0) - (a.completedAt?.getTime() || 0))[0];
+            
+            const daysSinceContact = lastActivity?.completedAt
+              ? Math.floor((Date.now() - lastActivity.completedAt.getTime()) / (1000 * 60 * 60 * 24))
+              : 999;
+            
+            // Calculate priority score (0-100)
+            let score = lead.confidenceScore || 50;
+            
+            // Boost score for high confidence
+            if (lead.confidenceScore && lead.confidenceScore > 80) score += 20;
+            
+            // Boost score if not contacted recently
+            if (daysSinceContact > 7) score += 15;
+            if (daysSinceContact > 14) score += 10;
+            
+            // Boost for new leads
+            if (lead.status === "new") score += 10;
+            
+            // Cap at 100
+            score = Math.min(100, score);
+            
+            // Determine urgency
+            let urgency: "high" | "medium" | "low" = "low";
+            if (score >= 80 || daysSinceContact > 14) urgency = "high";
+            else if (score >= 60 || daysSinceContact > 7) urgency = "medium";
+            
+            // Determine recommended action
+            let recommendedAction = "send_email";
+            let reason = "High confidence lead - time to reach out";
+            
+            if (lead.status === "new") {
+              recommendedAction = "send_email";
+              reason = "New lead - send initial outreach email";
+            } else if (daysSinceContact > 14) {
+              recommendedAction = "make_call";
+              reason = `No contact in ${daysSinceContact} days - call to re-engage`;
+            } else if (daysSinceContact > 7) {
+              recommendedAction = "send_email";
+              reason = `Follow up needed - last contact ${daysSinceContact} days ago`;
+            } else if (lead.confidenceScore && lead.confidenceScore > 85) {
+              recommendedAction = "make_call";
+              reason = "Very high confidence score - call to close";
+            }
+            
+            return {
+              leadId: lead.id,
+              companyName: lead.companyName,
+              contactName: lead.contactName,
+              contactEmail: lead.contactEmail,
+              contactPhone: lead.contactPhone,
+              contactJobTitle: lead.contactJobTitle,
+              priorityScore: Math.round(score),
+              urgency,
+              recommendedAction,
+              reason,
+              daysSinceContact,
+              lastContactDate: lastActivity?.completedAt || null,
+            };
+          })
+          .sort((a, b) => b.priorityScore - a.priorityScore)
+          .slice(0, 20); // Top 20 priority leads
+        
+        return {
+          leads: priorityLeads,
+          summary: {
+            totalLeads: priorityLeads.length,
+            highUrgency: priorityLeads.filter(l => l.urgency === "high").length,
+            mediumUrgency: priorityLeads.filter(l => l.urgency === "medium").length,
+            avgScore: Math.round(
+              priorityLeads.reduce((sum, l) => sum + l.priorityScore, 0) / priorityLeads.length || 0
+            ),
+          },
+        };
+      }),
   }),
 
   // ============================================================================

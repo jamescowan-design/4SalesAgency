@@ -12,6 +12,7 @@ import LeadsList from "@/pages/LeadsList";
 import LeadDetail from "@/pages/LeadDetail";
 import EmailComposer from "@/pages/EmailComposer";
 import Settings from "@/pages/Settings";
+import PriorityDashboard from "@/pages/PriorityDashboard";
 
 function Router() {
   return (
@@ -24,6 +25,7 @@ function Router() {
       <Route path="/leads/:id" component={LeadDetail} />
       <Route path="/leads/:leadId/email/:campaignId" component={EmailComposer} />
       <Route path="/settings" component={Settings} />
+      <Route path="/priority" component={PriorityDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
