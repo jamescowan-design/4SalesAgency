@@ -119,3 +119,13 @@
 - [x] Redesign UI for modern professional appearance (gradient backgrounds, modern cards, clean layouts)
 - [ ] Add AI email generation integration
 - [ ] Add AI voice calling integration
+
+## Web Scraper AI Feature
+- [x] Design scraper architecture and data flow
+- [x] Implement lead discovery using search APIs
+- [x] Build company website scraper
+- [x] Extract business intelligence (products, services, hiring signals)
+- [x] Create confidence scoring algorithm
+- [x] Add scraper trigger UI in campaign page
+- [x] Store scraped data in database
+- [x] AI-powered data extraction using LLM

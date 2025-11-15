@@ -3,6 +3,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
+import { TRPCError } from "@trpc/server";
 import * as db from "./db";
 
 // ============================================================================
@@ -527,6 +528,105 @@ export const appRouter = router({
         });
 
         return { success: true };
+      }),
+  }),
+
+  // ============================================================================
+  // WEB SCRAPER
+  // ============================================================================
+  
+  scraper: router({
+    // Start lead discovery for a campaign
+    startDiscovery: protectedProcedure
+      .input(z.object({
+        campaignId: z.number(),
+        limit: z.number().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const campaign = await db.getCampaignById(input.campaignId);
+        if (!campaign) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Campaign not found" });
+        }
+
+        const { discoverCompanies } = await import("./services/webScraper");
+        
+        const icp = {
+          industries: campaign.targetIndustries || undefined,
+          geographies: campaign.targetGeographies || undefined,
+          companySizeMin: campaign.companySizeMin || undefined,
+          companySizeMax: campaign.companySizeMax || undefined,
+        };
+
+        const result = await discoverCompanies(icp, input.limit || 50);
+        
+        return {
+          query: result.query,
+          companiesFound: result.companies.length,
+        };
+      }),
+
+    // Enrich a single company
+    enrichCompany: protectedProcedure
+      .input(z.object({
+        campaignId: z.number(),
+        companyNameOrUrl: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const campaign = await db.getCampaignById(input.campaignId);
+        if (!campaign) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Campaign not found" });
+        }
+
+        const { enrichCompanyData } = await import("./services/webScraper");
+        
+        const icp = {
+          industries: campaign.targetIndustries || undefined,
+          geographies: campaign.targetGeographies || undefined,
+          companySizeMin: campaign.companySizeMin || undefined,
+          companySizeMax: campaign.companySizeMax || undefined,
+        };
+
+        const companyData = await enrichCompanyData(input.companyNameOrUrl, icp);
+        
+        // Create lead in database
+        const leadId = await db.createLead({
+          campaignId: input.campaignId,
+          companyName: companyData.name,
+          companyWebsite: companyData.website,
+          companyIndustry: companyData.industry,
+          companyLocation: companyData.location,
+          companySize: companyData.employeeCount,
+          contactEmail: companyData.contactEmail,
+          contactPhone: companyData.contactPhone,
+          confidenceScore: companyData.confidence,
+          status: "new",
+        });
+
+        // Store scraped data
+        if (companyData.description || companyData.products || companyData.services) {
+          await db.createScrapedData({
+            leadId,
+            sourceUrl: companyData.website || "",
+            dataType: "company_info",
+            rawData: {
+              description: companyData.description,
+              products: companyData.products,
+              services: companyData.services,
+              hiringSignals: companyData.hiringSignals,
+            },
+          });
+        }
+
+        // Log activity
+        await db.createAuditLog({
+          userId: ctx.user.id,
+          action: "enrich_company",
+          resourceType: "lead",
+          resourceId: leadId,
+          changes: { companyData } as any,
+        });
+
+        return { leadId, companyData };
       }),
   }),
 
