@@ -14,6 +14,7 @@ import EmailComposer from "@/pages/EmailComposer";
 import Settings from "@/pages/Settings";
 import PriorityDashboard from "@/pages/PriorityDashboard";
 import AnalyticsDashboard from "@/pages/AnalyticsDashboard";
+import BulkOperations from "@/pages/BulkOperations";
 
 function Router() {
   return (
@@ -28,6 +29,7 @@ function Router() {
       <Route path="/settings" component={Settings} />
       <Route path="/priority" component={PriorityDashboard} />
       <Route path="/analytics" component={AnalyticsDashboard} />
+      <Route path="/bulk" component={BulkOperations} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

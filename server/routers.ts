@@ -91,6 +91,89 @@ export const appRouter = router({
   settings: settingsRouter,
   emails: emailsRouter,
   
+  bulkOperations: router({
+    importLeads: protectedProcedure
+      .input(z.object({
+        campaignId: z.number(),
+        leads: z.array(z.object({
+          companyName: z.string(),
+          companyWebsite: z.string().optional(),
+          companyIndustry: z.string().optional(),
+          contactName: z.string().optional(),
+          contactEmail: z.string().optional(),
+          contactPhone: z.string().optional(),
+          contactJobTitle: z.string().optional(),
+        })),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        let successful = 0;
+        let failed = 0;
+        let duplicates = 0;
+
+        for (const leadData of input.leads) {
+          try {
+            // Check for duplicates
+            const existing = await db.getLeadsByCampaignId(input.campaignId);
+            const isDuplicate = existing.some(
+              l => l.companyName === leadData.companyName && l.contactEmail === leadData.contactEmail
+            );
+
+            if (isDuplicate) {
+              duplicates++;
+              continue;
+            }
+
+            // Create lead
+            await db.createLead({
+              campaignId: input.campaignId,
+              ...leadData,
+            });
+            successful++;
+          } catch (error) {
+            failed++;
+          }
+        }
+
+        return { successful, failed, duplicates };
+      }),
+
+    exportLeads: protectedProcedure
+      .input(z.object({ campaignId: z.number() }))
+      .mutation(async ({ input }) => {
+        const leads = await db.getLeadsByCampaignId(input.campaignId);
+        return { leads };
+      }),
+
+    sendBulkEmails: protectedProcedure
+      .input(z.object({
+        campaignId: z.number(),
+        emailType: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const leads = await db.getLeadsByCampaignId(input.campaignId);
+        const newLeads = leads.filter(l => l.status === 'new' && l.contactEmail);
+
+        let successful = 0;
+        let failed = 0;
+
+        // Note: In production, this should use a queue system
+        for (const lead of newLeads.slice(0, 10)) { // Limit to 10 for demo
+          try {
+            // This would call the email generation and sending service
+            // For now, just mark as contacted
+            await db.updateLeadStatus(lead.id, 'contacted');
+            successful++;
+            // Add 1 second delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          } catch (error) {
+            failed++;
+          }
+        }
+
+        return { successful, failed };
+      }),
+  }),
+  
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

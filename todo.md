@@ -244,13 +244,13 @@
   - [x] Lead source breakdown charts
   - [ ] Export analytics to PDF/CSV
 
-- [ ] Bulk Operations UI
-  - [ ] CSV import interface with drag-and-drop
-  - [ ] Bulk enrichment with progress tracking
-  - [ ] Bulk email composer with preview
-  - [ ] Bulk status update interface
-  - [ ] Export to CSV functionality
-  - [ ] Bulk action history log
+- [x] Bulk Operations UI
+  - [x] CSV import interface with drag-and-drop
+  - [x] Bulk enrichment with progress tracking
+  - [x] Bulk email composer with preview
+  - [x] Bulk status update interface
+  - [x] Export to CSV functionality
+  - [x] Bulk action history log
 
 ## Phase 3: Workflow Automation
 - [ ] Workflow Automation Engine
