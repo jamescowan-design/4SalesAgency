@@ -4,6 +4,8 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import Sidebar from "@/components/Sidebar";
+import { useAuth } from "@/_core/hooks/useAuth";
 import Home from "@/pages/Home";
 import ClientsList from "@/pages/ClientsList";
 import ClientDetail from "@/pages/ClientDetail";
@@ -50,10 +52,31 @@ function App() {
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
-          <Router />
+          <AppLayout />
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
+  );
+}
+
+function AppLayout() {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen">
+      {isAuthenticated && <Sidebar />}
+      <main className={`flex-1 ${isAuthenticated ? 'lg:ml-64' : ''}`}>
+        <Router />
+      </main>
+    </div>
   );
 }
 
