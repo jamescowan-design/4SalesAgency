@@ -6,7 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
-import { Save, Eye, EyeOff, CheckCircle2, AlertCircle } from "lucide-react";
+import { Save, Eye, EyeOff } from "lucide-react";
+import { TestConnectionButton } from "@/components/TestConnectionButton";
 
 export default function Settings() {
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
@@ -52,15 +53,26 @@ export default function Settings() {
     },
   });
 
+  const [testResults, setTestResults] = useState<Record<string, { success: boolean; message: string; timestamp: number } | null>>({});
+
   const testConnection = trpc.settings.testConnection.useMutation({
-    onSuccess: (result) => {
+    onSuccess: (result, variables) => {
+      const timestamp = Date.now();
+      setTestResults(prev => ({
+        ...prev,
+        [variables.service]: { ...result, timestamp }
+      }));
       if (result.success) {
         toast.success(result.message || "Connection test successful");
       } else {
         toast.error(result.message || "Connection test failed");
       }
     },
-    onError: (error) => {
+    onError: (error, variables) => {
+      setTestResults(prev => ({
+        ...prev,
+        [variables.service]: { success: false, message: error.message, timestamp: Date.now() }
+      }));
       toast.error(`Connection test failed: ${error.message}`);
     },
   });
@@ -237,18 +249,18 @@ export default function Settings() {
                   )}
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <Button onClick={() => handleSave("email")} disabled={saveSettings.isPending}>
                     <Save className="mr-2 h-4 w-4" />
                     Save Email Settings
                   </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleTestConnection("email")}
-                    disabled={testConnection.isPending}
-                  >
-                    Test Connection
-                  </Button>
+                  <TestConnectionButton
+                    service="email"
+                    onTest={handleTestConnection}
+                    isPending={testConnection.isPending}
+                    currentService={testConnection.variables?.service}
+                    result={testResults.email}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -290,18 +302,18 @@ export default function Settings() {
                   />
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <Button onClick={() => handleSave("twilio")} disabled={saveSettings.isPending}>
                     <Save className="mr-2 h-4 w-4" />
                     Save Twilio Settings
                   </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleTestConnection("twilio")}
-                    disabled={testConnection.isPending}
-                  >
-                    Test Connection
-                  </Button>
+                  <TestConnectionButton
+                    service="twilio"
+                    onTest={handleTestConnection}
+                    isPending={testConnection.isPending}
+                    currentService={testConnection.variables?.service}
+                    result={testResults.twilio}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -335,18 +347,18 @@ export default function Settings() {
                   />
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <Button onClick={() => handleSave("vapi")} disabled={saveSettings.isPending}>
                     <Save className="mr-2 h-4 w-4" />
                     Save VAPI Settings
                   </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleTestConnection("vapi")}
-                    disabled={testConnection.isPending}
-                  >
-                    Test Connection
-                  </Button>
+                  <TestConnectionButton
+                    service="vapi"
+                    onTest={handleTestConnection}
+                    isPending={testConnection.isPending}
+                    currentService={testConnection.variables?.service}
+                    result={testResults.vapi}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -380,18 +392,18 @@ export default function Settings() {
                   />
                 </div>
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <Button onClick={() => handleSave("elevenlabs")} disabled={saveSettings.isPending}>
                     <Save className="mr-2 h-4 w-4" />
                     Save ElevenLabs Settings
                   </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleTestConnection("elevenlabs")}
-                    disabled={testConnection.isPending}
-                  >
-                    Test Connection
-                  </Button>
+                  <TestConnectionButton
+                    service="elevenlabs"
+                    onTest={handleTestConnection}
+                    isPending={testConnection.isPending}
+                    currentService={testConnection.variables?.service}
+                    result={testResults.elevenlabs}
+                  />
                 </div>
               </CardContent>
             </Card>
@@ -415,18 +427,18 @@ export default function Settings() {
                   (value) => setFormData({ ...formData, assemblyaiApiKey: value })
                 )}
 
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                   <Button onClick={() => handleSave("assemblyai")} disabled={saveSettings.isPending}>
                     <Save className="mr-2 h-4 w-4" />
                     Save AssemblyAI Settings
                   </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleTestConnection("assemblyai")}
-                    disabled={testConnection.isPending}
-                  >
-                    Test Connection
-                  </Button>
+                  <TestConnectionButton
+                    service="assemblyai"
+                    onTest={handleTestConnection}
+                    isPending={testConnection.isPending}
+                    currentService={testConnection.variables?.service}
+                    result={testResults.assemblyai}
+                  />
                 </div>
               </CardContent>
             </Card>
