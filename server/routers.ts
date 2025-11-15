@@ -91,6 +91,48 @@ export const appRouter = router({
   settings: settingsRouter,
   emails: emailsRouter,
   
+  workflows: router({
+    list: protectedProcedure
+      .input(z.object({ campaignId: z.number() }))
+      .query(async ({ input }) => {
+        return db.getWorkflowsByCampaignId(input.campaignId);
+      }),
+
+    create: protectedProcedure
+      .input(z.object({
+        campaignId: z.number(),
+        triggerType: z.enum(["time_based", "status_change", "inactivity"]),
+        triggerConfig: z.record(z.string(), z.any()),
+        actionType: z.enum(["send_email", "make_call", "update_status", "notify_owner"]),
+        actionConfig: z.record(z.string(), z.any()),
+        isActive: z.boolean(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const id = await db.createWorkflow({
+          ...input,
+          userId: ctx.user.id,
+        });
+        return { id };
+      }),
+
+    toggle: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        isActive: z.boolean(),
+      }))
+      .mutation(async ({ input }) => {
+        await db.updateWorkflow(input.id, { isActive: input.isActive });
+        return { success: true };
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ input }) => {
+        await db.deleteWorkflow(input.id);
+        return { success: true };
+      }),
+  }),
+
   bulkOperations: router({
     importLeads: protectedProcedure
       .input(z.object({
@@ -930,7 +972,7 @@ export const appRouter = router({
   // LEAD NURTURING WORKFLOWS
   // ============================================================================
   
-  workflows: router({
+  nurturingWorkflows: router({
     // Get workflow templates
     getTemplates: protectedProcedure.query(async () => {
       const { WORKFLOW_TEMPLATES } = await import("./services/nurturingWorkflows");

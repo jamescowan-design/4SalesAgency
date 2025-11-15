@@ -15,6 +15,7 @@ import Settings from "@/pages/Settings";
 import PriorityDashboard from "@/pages/PriorityDashboard";
 import AnalyticsDashboard from "@/pages/AnalyticsDashboard";
 import BulkOperations from "@/pages/BulkOperations";
+import WorkflowAutomation from "@/pages/WorkflowAutomation";
 
 function Router() {
   return (
@@ -30,6 +31,7 @@ function Router() {
       <Route path="/priority" component={PriorityDashboard} />
       <Route path="/analytics" component={AnalyticsDashboard} />
       <Route path="/bulk" component={BulkOperations} />
+      <Route path="/workflows" component={WorkflowAutomation} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

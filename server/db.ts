@@ -18,6 +18,8 @@ import {
   recruitmentIntelligence,
   auditLogs,
   errorLogs,
+  workflows,
+  workflowExecutions,
   InsertClient,
   InsertCampaign,
   InsertLead,
@@ -31,6 +33,8 @@ import {
   InsertCallScript,
   InsertScrapedData,
   InsertRecruitmentIntelligence,
+  InsertWorkflow,
+  InsertWorkflowExecution,
   InsertAuditLog,
   InsertErrorLog,
 } from "../drizzle/schema";
@@ -525,4 +529,78 @@ export async function getUnresolvedErrors() {
   if (!db) return [];
 
   return db.select().from(errorLogs).where(eq(errorLogs.resolved, false)).orderBy(desc(errorLogs.createdAt)).limit(100);
+}
+
+// ============================================================================
+// WORKFLOW AUTOMATION
+// ============================================================================
+
+export async function createWorkflow(data: InsertWorkflow) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(workflows).values(data);
+  return Number((result as any).insertId);
+}
+
+export async function getWorkflowsByCampaignId(campaignId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select().from(workflows).where(eq(workflows.campaignId, campaignId)).orderBy(desc(workflows.createdAt));
+}
+
+export async function getActiveWorkflows() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select().from(workflows).where(eq(workflows.isActive, true));
+}
+
+export async function updateWorkflow(id: number, data: Partial<InsertWorkflow>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.update(workflows).set(data).where(eq(workflows.id, id));
+}
+
+export async function deleteWorkflow(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  await db.delete(workflows).where(eq(workflows.id, id));
+}
+
+export async function createWorkflowExecution(data: InsertWorkflowExecution) {
+  const db = await getDb();
+  if (!db) return;
+
+  try {
+    await db.insert(workflowExecutions).values(data);
+  } catch (error) {
+    console.error("[Database] Failed to create workflow execution:", error);
+  }
+}
+
+export async function getWorkflowExecutions(campaignId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  // Get workflows for campaign, then get executions
+  const campaignWorkflows = await getWorkflowsByCampaignId(campaignId);
+  const workflowIds = campaignWorkflows.map(w => w.id);
+  
+  if (workflowIds.length === 0) return [];
+
+  return db.select().from(workflowExecutions)
+    .where(sql`${workflowExecutions.workflowId} IN (${workflowIds.join(',')})`)
+    .orderBy(desc(workflowExecutions.executedAt))
+    .limit(100);
+}
+
+export async function getAllLeads() {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select().from(leads).orderBy(desc(leads.createdAt));
 }

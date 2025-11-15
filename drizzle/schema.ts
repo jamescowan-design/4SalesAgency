@@ -423,3 +423,37 @@ export const apiSettings = mysqlTable("api_settings", {
 
 export type ApiSetting = typeof apiSettings.$inferSelect;
 export type InsertApiSetting = typeof apiSettings.$inferInsert;
+
+// ============================================================================
+// WORKFLOW AUTOMATION TABLES
+// ============================================================================
+
+export const workflows = mysqlTable("workflows", {
+  id: int("id").autoincrement().primaryKey(),
+  campaignId: int("campaignId").notNull(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }),
+  triggerType: mysqlEnum("triggerType", ["time_based", "status_change", "inactivity"]).notNull(),
+  triggerConfig: json("triggerConfig").$type<Record<string, any>>().notNull(), // { days: 7, schedule: "0 9 * * *", targetStatus: "new" }
+  actionType: mysqlEnum("actionType", ["send_email", "make_call", "update_status", "notify_owner"]).notNull(),
+  actionConfig: json("actionConfig").$type<Record<string, any>>().notNull(), // { emailTemplate: "follow_up", newStatus: "contacted" }
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const workflowExecutions = mysqlTable("workflow_executions", {
+  id: int("id").autoincrement().primaryKey(),
+  workflowId: int("workflowId").notNull(),
+  leadId: int("leadId").notNull(),
+  status: mysqlEnum("status", ["success", "failed", "skipped"]).notNull(),
+  executedAt: timestamp("executedAt").defaultNow().notNull(),
+  errorMessage: text("errorMessage"),
+  metadata: json("metadata").$type<Record<string, any>>(),
+});
+
+export type Workflow = typeof workflows.$inferSelect;
+export type InsertWorkflow = typeof workflows.$inferInsert;
+
+export type WorkflowExecution = typeof workflowExecutions.$inferSelect;
+export type InsertWorkflowExecution = typeof workflowExecutions.$inferInsert;
