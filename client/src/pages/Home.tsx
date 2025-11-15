@@ -54,62 +54,68 @@ export default function Home() {
                 </div>
               </Link>
 
-              <div className="group p-8 rounded-xl border-2 border-border hover:border-primary transition-all cursor-not-allowed opacity-60 bg-card">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-lg bg-muted">
-                    <Target className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-semibold mb-2">
-                      Active Campaigns
-                    </h3>
-                    <p className="text-muted-foreground mb-4">
-                      Monitor and manage your lead generation campaigns
-                    </p>
-                    <div className="flex items-center text-muted-foreground font-medium">
-                      Coming Soon
+              <Link href="/clients">
+                <div className="group p-8 rounded-xl border-2 border-border hover:border-primary transition-all cursor-pointer bg-card hover:shadow-lg">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                      <Target className="h-8 w-8 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-semibold mb-2 group-hover:text-primary transition-colors">
+                        Active Campaigns
+                      </h3>
+                      <p className="text-muted-foreground mb-4">
+                        Monitor and manage your lead generation campaigns
+                      </p>
+                      <div className="flex items-center text-primary font-medium">
+                        View Campaigns <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
 
-              <div className="group p-8 rounded-xl border-2 border-border hover:border-primary transition-all cursor-not-allowed opacity-60 bg-card">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-lg bg-muted">
-                    <Users className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-semibold mb-2">
-                      Lead Dashboard
-                    </h3>
-                    <p className="text-muted-foreground mb-4">
-                      Track and qualify leads with AI assistance
-                    </p>
-                    <div className="flex items-center text-muted-foreground font-medium">
-                      Coming Soon
+              <Link href="/crm">
+                <div className="group p-8 rounded-xl border-2 border-border hover:border-primary transition-all cursor-pointer bg-card hover:shadow-lg">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                      <Users className="h-8 w-8 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-semibold mb-2 group-hover:text-primary transition-colors">
+                        Lead Dashboard
+                      </h3>
+                      <p className="text-muted-foreground mb-4">
+                        Track and qualify leads with AI assistance
+                      </p>
+                      <div className="flex items-center text-primary font-medium">
+                        View Leads <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
 
-              <div className="group p-8 rounded-xl border-2 border-border hover:border-primary transition-all cursor-not-allowed opacity-60 bg-card">
-                <div className="flex items-start gap-4">
-                  <div className="p-3 rounded-lg bg-muted">
-                    <Zap className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-semibold mb-2">
-                      Analytics
-                    </h3>
-                    <p className="text-muted-foreground mb-4">
-                      View performance metrics and insights
-                    </p>
-                    <div className="flex items-center text-muted-foreground font-medium">
-                      Coming Soon
+              <Link href="/analytics">
+                <div className="group p-8 rounded-xl border-2 border-border hover:border-primary transition-all cursor-pointer bg-card hover:shadow-lg">
+                  <div className="flex items-start gap-4">
+                    <div className="p-3 rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                      <Zap className="h-8 w-8 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-semibold mb-2 group-hover:text-primary transition-colors">
+                        Analytics
+                      </h3>
+                      <p className="text-muted-foreground mb-4">
+                        View performance metrics and insights
+                      </p>
+                      <div className="flex items-center text-primary font-medium">
+                        View Analytics <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             </div>
 
             <div className="text-center">

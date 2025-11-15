@@ -248,3 +248,7 @@ See `API_KEYS_REQUIRED.md` for detailed setup instructions.
 - [x] Fix recruitmentSignals table missing userId column
 - [x] Fix productKnowledge query still returning undefined (changed to null)
 - [x] Fix remaining nested anchor tags in other pages (ClientsList, ClientDetail, CampaignDetail, EmailComposer, LeadsList)
+
+## Homepage Improvements
+- [x] Activate all homepage cards with proper navigation links
+- [x] Remove "Coming Soon" placeholders from Active Campaigns, Lead Dashboard, and Analytics cards
