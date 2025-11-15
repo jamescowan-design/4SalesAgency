@@ -631,6 +631,70 @@ export const appRouter = router({
   }),
 
   // ============================================================================
+  // EMAIL GENERATION
+  // ============================================================================
+  
+  email: router({
+    // Generate personalized email using Virtual LLM
+    generate: protectedProcedure
+      .input(z.object({
+        campaignId: z.number(),
+        leadId: z.number(),
+        emailType: z.enum(["initial_outreach", "follow_up", "meeting_request", "custom"]),
+        customInstructions: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { generateEmail } = await import("./services/emailGenerator");
+        const email = await generateEmail(input);
+        return email;
+      }),
+
+    // Send email to lead
+    send: protectedProcedure
+      .input(z.object({
+        leadId: z.number(),
+        campaignId: z.number(),
+        subject: z.string(),
+        body: z.string(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const lead = await db.getLeadById(input.leadId);
+        if (!lead || !lead.contactEmail) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Lead has no email address" });
+        }
+
+        // TODO: Integrate with actual email service (SendGrid/SMTP)
+        // For now, just log the communication
+        const logId = await db.createCommunicationLog({
+          leadId: input.leadId,
+          campaignId: input.campaignId,
+          communicationType: "email",
+          direction: "outbound",
+          subject: input.subject,
+          content: input.body,
+          status: "sent",
+          sentAt: new Date(),
+        });
+
+        // Update lead last contacted
+        await db.updateLead(input.leadId, {
+          lastContactedAt: new Date(),
+        });
+
+        // Log activity
+        await db.createActivity({
+          leadId: input.leadId,
+          campaignId: input.campaignId,
+          userId: ctx.user.id,
+          activityType: "email",
+          description: `Sent email: ${input.subject}`,
+        });
+
+        return { success: true, logId };
+      }),
+  }),
+
+  // ============================================================================
   // ANALYTICS
   // ============================================================================
   

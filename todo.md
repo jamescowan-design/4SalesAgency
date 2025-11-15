@@ -129,3 +129,61 @@
 - [x] Add scraper trigger UI in campaign page
 - [x] Store scraped data in database
 - [x] AI-powered data extraction using LLM
+
+## Email Generation & Sending
+- [x] AI email composer using Virtual LLM knowledge
+- [x] Email templates with merge fields
+- [x] Email generation tRPC procedures
+- [x] Email tracking (sent status logged)
+- [ ] Email sending integration (SMTP/SendGrid) - TODO
+- [x] Email composer UI with AI generation
+- [ ] Email preview UI (optional)
+
+## Voice Calling Integration
+- [ ] Twilio integration for outbound calls
+- [ ] VAPI integration for AI conversation handling
+- [ ] ElevenLabs voice synthesis
+- [ ] Call recording and storage
+- [ ] Call transcription with AssemblyAI
+- [ ] Sentiment analysis on calls
+- [ ] Call scripts based on Virtual LLM
+
+## Lead Verification
+- [ ] Email validation API integration
+- [ ] Phone number validation
+- [ ] Verification status tracking
+- [ ] Bulk verification support
+
+## Lead Nurturing Workflows
+- [ ] Workflow builder (sequence of actions)
+- [ ] Trigger conditions (time-based, behavior-based)
+- [ ] Automated follow-up sequences
+- [ ] Lead temperature tracking (hot/warm/cold)
+- [ ] Workflow analytics
+
+## Multi-Channel Attribution
+- [ ] Full lead journey timeline
+- [ ] Track all touchpoints (email, call, SMS)
+- [ ] Attribution models (first-touch, last-touch, multi-touch)
+- [ ] Channel performance metrics
+- [ ] Conversion path analysis
+
+## AI Lead Prioritization
+- [ ] Scoring algorithm (confidence + engagement + signals)
+- [ ] Daily "Top Leads" recommendations
+- [ ] Priority queue dashboard
+- [ ] Smart notifications
+
+## Bulk Operations
+- [ ] CSV lead import
+- [ ] Bulk enrichment
+- [ ] Bulk email sending
+- [ ] Bulk status updates
+- [ ] Export leads to CSV
+
+## Analytics Dashboard
+- [ ] Campaign performance overview
+- [ ] Email metrics (open rate, reply rate, etc.)
+- [ ] Call metrics (answer rate, conversion rate)
+- [ ] Conversion funnel visualization
+- [ ] ROI tracking per campaign
