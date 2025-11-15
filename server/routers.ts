@@ -409,10 +409,27 @@ export const appRouter = router({
   // ============================================================================
   
   leads: router({
+    list: protectedProcedure
+      .query(async () => {
+        return db.getAllLeads();
+      }),
+
     listByCampaign: protectedProcedure
       .input(z.object({ campaignId: z.number() }))
       .query(async ({ input }) => {
         return db.getLeadsByCampaignId(input.campaignId);
+      }),
+
+    getStats: protectedProcedure
+      .query(async () => {
+        const leads = await db.getAllLeads();
+        return {
+          total: leads.length,
+          new: leads.filter(l => l.status === 'new').length,
+          contacted: leads.filter(l => l.status === 'contacted').length,
+          qualified: leads.filter(l => l.status === 'qualified').length,
+          converted: leads.filter(l => l.status === 'converted').length,
+        };
       }),
 
     getById: protectedProcedure
@@ -497,6 +514,43 @@ export const appRouter = router({
         });
 
         return { success: true };
+      }),
+
+    bulkUpdateStatus: protectedProcedure
+      .input(z.object({
+        leadIds: z.array(z.number()),
+        status: z.enum(["new", "contacted", "responded", "qualified", "unqualified", "converted", "rejected"]),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        for (const leadId of input.leadIds) {
+          await db.updateLeadStatus(leadId, input.status);
+          await db.createAuditLog({
+            userId: ctx.user.id,
+            action: "bulk_update_lead_status",
+            resourceType: "lead",
+            resourceId: leadId,
+            changes: { status: input.status },
+          });
+        }
+        return { success: true, count: input.leadIds.length };
+      }),
+
+    bulkDelete: protectedProcedure
+      .input(z.object({
+        leadIds: z.array(z.number()),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        for (const leadId of input.leadIds) {
+          await db.deleteLead(leadId);
+          await db.createAuditLog({
+            userId: ctx.user.id,
+            action: "bulk_delete_lead",
+            resourceType: "lead",
+            resourceId: leadId,
+            changes: {},
+          });
+        }
+        return { success: true, count: input.leadIds.length };
       }),
 
     getPriorityLeads: protectedProcedure
