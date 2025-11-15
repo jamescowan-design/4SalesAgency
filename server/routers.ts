@@ -695,16 +695,308 @@ export const appRouter = router({
   }),
 
   // ============================================================================
+  // VOICE CALLING
+  // ============================================================================
+  
+  voice: router({
+    // Generate call script
+    generateScript: protectedProcedure
+      .input(z.object({
+        campaignId: z.number(),
+        leadId: z.number(),
+        callType: z.enum(["qualification", "follow_up", "demo_booking", "custom"]),
+        customInstructions: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { generateCallScript } = await import("./services/voiceCalling");
+        const script = await generateCallScript(input);
+        return script;
+      }),
+
+    // Initiate outbound call
+    initiateCall: protectedProcedure
+      .input(z.object({
+        leadId: z.number(),
+        campaignId: z.number(),
+        phoneNumber: z.string(),
+        callScript: z.object({
+          greeting: z.string(),
+          mainTalkingPoints: z.array(z.string()),
+          objectionHandling: z.record(z.string(), z.string()),
+          closingStatement: z.string(),
+          callToAction: z.string(),
+        }),
+      }))
+      .mutation(async ({ input }) => {
+        const { initiateCall } = await import("./services/voiceCalling");
+        const result = await initiateCall(input);
+        return result;
+      }),
+
+    // List call sessions for a lead
+    listByLead: protectedProcedure
+      .input(z.object({ leadId: z.number() }))
+      .query(async ({ input }) => {
+        const sessions = await db.getVoiceCallSessionsByLeadId(input.leadId);
+        return sessions;
+      }),
+
+    // Get call session details
+    getSession: protectedProcedure
+      .input(z.object({ sessionId: z.number() }))
+      .query(async ({ input }) => {
+        const sessions = await db.getVoiceCallSessionsByLeadId(0);
+        return sessions.find(s => s.id === input.sessionId);
+      }),
+  }),
+
+  // ============================================================================
+  // LEAD NURTURING WORKFLOWS
+  // ============================================================================
+  
+  workflows: router({
+    // Get workflow templates
+    getTemplates: protectedProcedure.query(async () => {
+      const { WORKFLOW_TEMPLATES } = await import("./services/nurturingWorkflows");
+      return WORKFLOW_TEMPLATES;
+    }),
+
+    // Enroll lead in workflow
+    enrollLead: protectedProcedure
+      .input(z.object({
+        leadId: z.number(),
+        campaignId: z.number(),
+        workflowTemplate: z.enum(["coldOutreach", "warmLeadNurture", "postDemo"]),
+      }))
+      .mutation(async ({ input }) => {
+        const { enrollLeadInWorkflow } = await import("./services/nurturingWorkflows");
+        const result = await enrollLeadInWorkflow(
+          input.leadId,
+          input.campaignId,
+          input.workflowTemplate
+        );
+        return result;
+      }),
+
+    // Process workflows (called by cron)
+    processAll: protectedProcedure
+      .input(z.object({ campaignId: z.number() }))
+      .mutation(async ({ input }) => {
+        const { processWorkflows } = await import("./services/nurturingWorkflows");
+        const stats = await processWorkflows(input.campaignId);
+        return stats;
+      }),
+  }),
+
+  // ============================================================================
+  // LEAD VERIFICATION
+  // ============================================================================
+  
+  verification: router({
+    // Verify single lead
+    verifyLead: protectedProcedure
+      .input(z.object({ leadId: z.number() }))
+      .mutation(async ({ input }) => {
+        const { verifyLead } = await import("./services/leadVerification");
+        const result = await verifyLead(input.leadId);
+        return result;
+      }),
+
+    // Bulk verify leads
+    bulkVerify: protectedProcedure
+      .input(z.object({ leadIds: z.array(z.number()) }))
+      .mutation(async ({ input }) => {
+        const { bulkVerifyLeads } = await import("./services/leadVerification");
+        const results = await bulkVerifyLeads(input.leadIds);
+        return Object.fromEntries(results);
+      }),
+
+    // Get campaign verification stats
+    campaignStats: protectedProcedure
+      .input(z.object({ campaignId: z.number() }))
+      .query(async ({ input }) => {
+        const { getCampaignVerificationStats } = await import("./services/leadVerification");
+        const stats = await getCampaignVerificationStats(input.campaignId);
+        return stats;
+      }),
+  }),
+
+  // ============================================================================
+  // BULK OPERATIONS
+  // ============================================================================
+  
+  bulk: router({
+    // Import leads from CSV
+    importCSV: protectedProcedure
+      .input(z.object({
+        campaignId: z.number(),
+        csvContent: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const { importLeadsFromCSV } = await import("./services/bulkOperations");
+        return await importLeadsFromCSV(input.campaignId, input.csvContent);
+      }),
+
+    // Bulk enrich leads
+    enrichLeads: protectedProcedure
+      .input(z.object({
+        leadIds: z.array(z.number()),
+      }))
+      .mutation(async ({ input }) => {
+        const { bulkEnrichLeads } = await import("./services/bulkOperations");
+        return await bulkEnrichLeads(input.leadIds);
+      }),
+
+    // Bulk send emails
+    sendEmails: protectedProcedure
+      .input(z.object({
+        leadIds: z.array(z.number()),
+        emailType: z.enum(["initial_outreach", "follow_up", "meeting_request", "custom"]),
+        customContent: z.string().optional(),
+      }))
+      .mutation(async ({ input }) => {
+        const { bulkSendEmails } = await import("./services/bulkOperations");
+        return await bulkSendEmails(input.leadIds, input.emailType, input.customContent);
+      }),
+
+    // Bulk update status
+    updateStatus: protectedProcedure
+      .input(z.object({
+        leadIds: z.array(z.number()),
+        newStatus: z.string(),
+      }))
+      .mutation(async ({ input }) => {
+        const { bulkUpdateStatus } = await import("./services/bulkOperations");
+        return await bulkUpdateStatus(input.leadIds, input.newStatus);
+      }),
+
+    // Export leads to CSV
+    exportCSV: protectedProcedure
+      .input(z.object({ campaignId: z.number() }))
+      .query(async ({ input }) => {
+        const { exportLeadsToCSV } = await import("./services/bulkOperations");
+        return await exportLeadsToCSV(input.campaignId);
+      }),
+  }),
+
+  // ============================================================================
+  // AI LEAD PRIORITIZATION
+  // ============================================================================
+  
+  prioritization: router({
+    // Get prioritized leads
+    getPrioritized: protectedProcedure
+      .input(z.object({
+        campaignId: z.number(),
+        limit: z.number().optional(),
+      }))
+      .query(async ({ input }) => {
+        const { getPrioritizedLeads } = await import("./services/leadPrioritization");
+        return await getPrioritizedLeads(input.campaignId, input.limit);
+      }),
+
+    // Get daily top leads
+    dailyTop: protectedProcedure
+      .input(z.object({ campaignId: z.number() }))
+      .query(async ({ input }) => {
+        const { getDailyTopLeads } = await import("./services/leadPrioritization");
+        return await getDailyTopLeads(input.campaignId);
+      }),
+
+    // Get urgent leads
+    urgent: protectedProcedure
+      .input(z.object({ campaignId: z.number() }))
+      .query(async ({ input }) => {
+        const { getUrgentLeads } = await import("./services/leadPrioritization");
+        return await getUrgentLeads(input.campaignId);
+      }),
+
+    // Get leads grouped by recommended action
+    byAction: protectedProcedure
+      .input(z.object({ campaignId: z.number() }))
+      .query(async ({ input }) => {
+        const { getLeadsByAction } = await import("./services/leadPrioritization");
+        return await getLeadsByAction(input.campaignId);
+      }),
+
+    // Calculate priority score for single lead
+    calculateScore: protectedProcedure
+      .input(z.object({ leadId: z.number() }))
+      .query(async ({ input }) => {
+        const { calculatePriorityScore } = await import("./services/leadPrioritization");
+        return await calculatePriorityScore(input.leadId);
+      }),
+  }),
+
+  // ============================================================================
+  // MULTI-CHANNEL ATTRIBUTION
+  // ============================================================================
+  
+  attribution: router({
+    // Get lead journey
+    leadJourney: protectedProcedure
+      .input(z.object({ leadId: z.number() }))
+      .query(async ({ input }) => {
+        const { getLeadJourney } = await import("./services/attribution");
+        return await getLeadJourney(input.leadId);
+      }),
+
+    // Calculate attribution model
+    calculateModel: protectedProcedure
+      .input(z.object({
+        campaignId: z.number(),
+        model: z.enum(["first_touch", "last_touch", "multi_touch", "time_decay"]).optional(),
+      }))
+      .query(async ({ input }) => {
+        const { calculateAttribution } = await import("./services/attribution");
+        return await calculateAttribution(input.campaignId, input.model);
+      }),
+
+    // Get channel performance
+    channelPerformance: protectedProcedure
+      .input(z.object({ campaignId: z.number() }))
+      .query(async ({ input }) => {
+        const { getChannelPerformance } = await import("./services/attribution");
+        return await getChannelPerformance(input.campaignId);
+      }),
+
+    // Get conversion funnel
+    conversionFunnel: protectedProcedure
+      .input(z.object({ campaignId: z.number() }))
+      .query(async ({ input }) => {
+        const { getConversionFunnel } = await import("./services/attribution");
+        return await getConversionFunnel(input.campaignId);
+      }),
+
+    // Get top conversion paths
+    topPaths: protectedProcedure
+      .input(z.object({
+        campaignId: z.number(),
+        limit: z.number().optional(),
+      }))
+      .query(async ({ input }) => {
+        const { getTopConversionPaths } = await import("./services/attribution");
+        return await getTopConversionPaths(input.campaignId, input.limit);
+      }),
+  }),
+
+  // ============================================================================
   // ANALYTICS
   // ============================================================================
   
   analytics: router({
+    // Campaign overview stats
     campaignStats: protectedProcedure
       .input(z.object({ campaignId: z.number() }))
       .query(async ({ input }) => {
         const campaign = await db.getCampaignById(input.campaignId);
         const leads = await db.getLeadsByCampaignId(input.campaignId);
         const activities = await db.getActivitiesByCampaignId(input.campaignId);
+        // Get all communication logs for leads in this campaign
+        const allCommunications = await Promise.all(
+          leads.map(async (lead) => await db.getCommunicationLogsByLeadId(lead.id))
+        );
+        const communications = allCommunications.flat();
 
         const leadsByStatus = leads.reduce((acc, lead) => {
           acc[lead.status] = (acc[lead.status] || 0) + 1;
@@ -715,13 +1007,146 @@ export const appRouter = router({
           ? leads.reduce((sum, lead) => sum + (lead.confidenceScore || 0), 0) / leads.length
           : 0;
 
+        // Email metrics
+        const emailComms = communications.filter(c => c.communicationType === 'email');
+        const emailsSent = emailComms.filter(c => c.direction === 'outbound').length;
+        const emailsOpened = emailComms.filter(c => c.status === 'opened').length;
+        const emailsReplied = emailComms.filter(c => c.status === 'replied').length;
+
+        // Call metrics
+        const callActivities = activities.filter(a => a.activityType === 'call');
+        const callsMade = callActivities.length;
+
         return {
           campaign,
           totalLeads: leads.length,
           leadsByStatus,
           totalActivities: activities.length,
           avgConfidenceScore: Math.round(avgConfidenceScore),
+          emailMetrics: {
+            sent: emailsSent,
+            opened: emailsOpened,
+            replied: emailsReplied,
+            openRate: emailsSent > 0 ? Math.round((emailsOpened / emailsSent) * 100) : 0,
+            replyRate: emailsSent > 0 ? Math.round((emailsReplied / emailsSent) * 100) : 0,
+          },
+          callMetrics: {
+            made: callsMade,
+          },
+          conversionRate: leads.length > 0
+            ? Math.round(((leadsByStatus.qualified || 0) / leads.length) * 100)
+            : 0,
         };
+      }),
+
+    // Email performance metrics
+    emailMetrics: protectedProcedure
+      .input(z.object({ campaignId: z.number() }))
+      .query(async ({ input }) => {
+        // Get all communication logs for leads in this campaign
+        const leads = await db.getLeadsByCampaignId(input.campaignId);
+        const allCommunications = await Promise.all(
+          leads.map(async (lead) => await db.getCommunicationLogsByLeadId(lead.id))
+        );
+        const communications = allCommunications.flat();
+        const emailComms = communications.filter((c: any) => c.communicationType === 'email');
+
+        const sent = emailComms.filter((c: any) => c.direction === 'outbound').length;
+        const opened = emailComms.filter((c: any) => c.status === 'opened').length;
+        const clicked = emailComms.filter((c: any) => c.status === 'clicked').length;
+        const replied = emailComms.filter((c: any) => c.status === 'replied').length;
+        const bounced = emailComms.filter((c: any) => c.status === 'bounced').length;
+
+        return {
+          sent,
+          opened,
+          clicked,
+          replied,
+          bounced,
+          openRate: sent > 0 ? Math.round((opened / sent) * 100) : 0,
+          clickRate: sent > 0 ? Math.round((clicked / sent) * 100) : 0,
+          replyRate: sent > 0 ? Math.round((replied / sent) * 100) : 0,
+          bounceRate: sent > 0 ? Math.round((bounced / sent) * 100) : 0,
+        };
+      }),
+
+    // Call performance metrics
+    callMetrics: protectedProcedure
+      .input(z.object({ campaignId: z.number() }))
+      .query(async ({ input }) => {
+        const activities = await db.getActivitiesByCampaignId(input.campaignId);
+        const calls = activities.filter(a => a.activityType === 'call');
+
+        return {
+          totalCalls: calls.length,
+          // TODO: Add more call metrics when voice calling is fully integrated
+        };
+      }),
+
+    // Lead source breakdown
+    leadSources: protectedProcedure
+      .input(z.object({ campaignId: z.number() }))
+      .query(async ({ input }) => {
+        const leads = await db.getLeadsByCampaignId(input.campaignId);
+        // Count scraped leads (those with scraped data)
+        const leadsWithScrapedData = await Promise.all(
+          leads.map(async (lead) => {
+            const scraped = await db.getScrapedDataByLeadId(lead.id);
+            return scraped.length > 0;
+          })
+        );
+
+        const webScraped = leadsWithScrapedData.filter(Boolean).length;
+        const manuallyAdded = leads.length - webScraped;
+
+        return {
+          webScraped,
+          manuallyAdded,
+          csvImported: 0, // TODO: Track CSV imports
+        };
+      }),
+
+    // Conversion funnel
+    conversionFunnel: protectedProcedure
+      .input(z.object({ campaignId: z.number() }))
+      .query(async ({ input }) => {
+        const leads = await db.getLeadsByCampaignId(input.campaignId);
+
+        const funnel = {
+          total: leads.length,
+          new: leads.filter(l => l.status === 'new').length,
+          contacted: leads.filter(l => l.status === 'contacted').length,
+          responded: leads.filter(l => l.status === 'responded').length,
+          qualified: leads.filter(l => l.status === 'qualified').length,
+          converted: leads.filter(l => l.status === 'converted').length,
+        };
+
+        return funnel;
+      }),
+
+    // Time-based activity trends
+    activityTrends: protectedProcedure
+      .input(z.object({
+        campaignId: z.number(),
+        days: z.number().optional(),
+      }))
+      .query(async ({ input }) => {
+        const days = input.days || 30;
+        const activities = await db.getActivitiesByCampaignId(input.campaignId);
+
+        // Group by date
+        const trends: Record<string, number> = {};
+        const now = new Date();
+        const cutoff = new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+
+        activities
+          .filter(a => a.createdAt >= cutoff)
+          .forEach(activity => {
+            const date = activity.createdAt.toISOString().split('T')[0];
+            trends[date] = (trends[date] || 0) + 1;
+          });
+
+        return trends;
       }),
   }),
 });
