@@ -567,3 +567,18 @@ export type ConsentRecord = typeof consentRecords.$inferSelect;
 export type InsertConsentRecord = typeof consentRecords.$inferInsert;
 export type DeletionRequest = typeof deletionRequests.$inferSelect;
 export type InsertDeletionRequest = typeof deletionRequests.$inferInsert;
+
+
+export const recruitmentSignals = mysqlTable("recruitmentSignals", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  companyName: varchar("companyName", { length: 255 }).notNull(),
+  signalType: mysqlEnum("signalType", ["job_posting", "funding", "expansion", "leadership_change"]).notNull(),
+  description: text("description").notNull(),
+  source: varchar("source", { length: 255 }).notNull(),
+  sourceUrl: text("sourceUrl"),
+  urgency: mysqlEnum("urgency", ["low", "medium", "high"]).notNull().default("medium"),
+  metadata: json("metadata"),
+  detectedAt: timestamp("detectedAt").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});

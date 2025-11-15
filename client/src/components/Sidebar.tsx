@@ -37,6 +37,8 @@ const navItems: NavItem[] = [
   { label: "Voice Calling", path: "/voice", icon: <Phone className="h-5 w-5" /> },
   { label: "Attribution", path: "/attribution", icon: <GitBranch className="h-5 w-5" /> },
   { label: "Enrichment", path: "/enrichment", icon: <Sparkles className="h-5 w-5" /> },
+  { label: "Recruitment Intel", path: "/recruitment", icon: <Users className="h-5 w-5" /> },
+  { label: "Campaign Templates", path: "/templates", icon: <Sparkles className="h-5 w-5" /> },
   { label: "GDPR Compliance", path: "/gdpr", icon: <Shield className="h-5 w-5" /> },
   { label: "Settings", path: "/settings", icon: <Settings className="h-5 w-5" /> },
 ];

@@ -10,6 +10,8 @@ import Home from "./pages/Home";
 import CRMDashboard from "./pages/CRMDashboard";
 import CustomReports from "@/pages/CustomReports";
 import GDPRCompliance from "@/pages/GDPRCompliance";
+import RecruitmentIntelligence from "@/pages/RecruitmentIntelligence";
+import CampaignTemplates from "@/pages/CampaignTemplates";
 import ClientsList from "@/pages/ClientsList";
 import ClientDetail from "@/pages/ClientDetail";
 import CampaignDetail from "@/pages/CampaignDetail";
@@ -31,7 +33,9 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path="/crm" component={CRMDashboard} />
       <Route path="/reports" component={CustomReports} />
-      <Route path="/gdpr" component={GDPRCompliance} />     <Route path="/clients" component={ClientsList} />
+      <Route path="/gdpr" component={GDPRCompliance} />
+      <Route path="/recruitment" component={RecruitmentIntelligence} />
+      <Route path="/templates" component={CampaignTemplates} />     <Route path="/clients" component={ClientsList} />
       <Route path="/clients/:id" component={ClientDetail} />
       <Route path="/campaigns/:id" component={CampaignDetail} />
       <Route path="/campaigns/:campaignId/leads" component={LeadsList} />
