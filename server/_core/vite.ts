@@ -11,6 +11,18 @@ export async function setupVite(app: Express, server: Server) {
     middlewareMode: true,
     hmr: false, // Disabled due to file descriptor limits in sandbox
     watch: null, // Disable file watching
+    host: true,
+    allowedHosts: [
+      ".manuspre.computer",
+      ".manus.computer",
+      ".manus-asia.computer",
+      ".manuscomputer.ai",
+      ".manusvm.computer",
+      "3000-i7y99yg08y4ritwgpqp94-49987dd6.manusvm.computer",
+      "localhost",
+      "127.0.0.1",
+      "all",
+    ],
   };
 
   const vite = await createViteServer({

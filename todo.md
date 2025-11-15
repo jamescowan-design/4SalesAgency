@@ -229,3 +229,6 @@ See `API_KEYS_REQUIRED.md` for detailed setup instructions.
 
 ## Additional Documentation Tasks
 - [x] Create streamlined step-by-step testing and API setup guide (QUICK_START_GUIDE.md)
+
+## Bug Fixes
+- [x] Fix Vite server.allowedHosts configuration for Manus sandbox access

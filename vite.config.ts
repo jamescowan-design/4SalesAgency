@@ -33,8 +33,10 @@ export default defineConfig({
       ".manus-asia.computer",
       ".manuscomputer.ai",
       ".manusvm.computer",
+      "3000-i7y99yg08y4ritwgpqp94-49987dd6.manusvm.computer",
       "localhost",
       "127.0.0.1",
+      "all",
     ],
     watch: {
       ignored: ['**/node_modules/**', '**/.git/**'],
