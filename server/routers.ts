@@ -10,6 +10,7 @@ import { voiceCallingRouter } from "./trpc/routers/voiceCalling";
 import { gdprRouter } from "./trpc/routers/gdpr";
 import { recruitmentRouter } from "./trpc/routers/recruitment";
 import { tasksRouter } from "./trpc/routers/tasks";
+import { exportsRouter } from "./trpc/routers/exports";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { TRPCError } from "@trpc/server";
 import * as db from "./db";
@@ -102,6 +103,7 @@ export const appRouter = router({
   gdpr: gdprRouter,
   recruitment: recruitmentRouter,
   tasks: tasksRouter,
+  exports: exportsRouter,
   workflows: router({
     list: protectedProcedure
       .input(z.object({ campaignId: z.number() }))

@@ -19,16 +19,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { trpc } from "@/lib/trpc";
-import { ArrowLeft, Search, Filter, Mail, Phone, ExternalLink } from "lucide-react";
+import { ArrowLeft, Search, Filter, Mail, Phone, ExternalLink, Download } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "wouter";
 import AddLeadDialog from "@/components/AddLeadDialog";
+import ExportLeadDialog from "@/components/ExportLeadDialog";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function LeadsList() {
   const params = useParams();
   const campaignId = parseInt(params.campaignId || "0");
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [selectedLeads, setSelectedLeads] = useState<number[]>([]);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
 
   const { data: campaign } = trpc.campaigns.getById.useQuery({ id: campaignId });
   const { data: leads, isLoading } = trpc.leads.listByCampaign.useQuery({ campaignId });
@@ -153,6 +157,15 @@ export default function LeadsList() {
           <CardContent className="pt-6">
             <div className="flex gap-4 items-center">
               <AddLeadDialog campaignId={campaignId} />
+              {selectedLeads.length > 0 && (
+                <Button
+                  variant="outline"
+                  onClick={() => setExportDialogOpen(true)}
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  Export ({selectedLeads.length})
+                </Button>
+              )}
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
@@ -198,6 +211,18 @@ export default function LeadsList() {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead className="w-12">
+                      <Checkbox
+                        checked={selectedLeads.length === filteredLeads.length && filteredLeads.length > 0}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setSelectedLeads(filteredLeads.map(l => l.id));
+                          } else {
+                            setSelectedLeads([]);
+                          }
+                        }}
+                      />
+                    </TableHead>
                     <TableHead>Company</TableHead>
                     <TableHead>Contact</TableHead>
                     <TableHead>Industry</TableHead>
@@ -210,6 +235,18 @@ export default function LeadsList() {
                 <TableBody>
                   {filteredLeads.map((lead) => (
                     <TableRow key={lead.id} className="cursor-pointer hover:bg-muted/50">
+                      <TableCell onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          checked={selectedLeads.includes(lead.id)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setSelectedLeads([...selectedLeads, lead.id]);
+                            } else {
+                              setSelectedLeads(selectedLeads.filter(id => id !== lead.id));
+                            }
+                          }}
+                        />
+                      </TableCell>
                       <TableCell>
                         <div>
                           <p className="font-medium">{lead.companyName}</p>
@@ -323,6 +360,17 @@ export default function LeadsList() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Export Dialog */}
+      <ExportLeadDialog
+        open={exportDialogOpen}
+        onOpenChange={setExportDialogOpen}
+        leadIds={selectedLeads}
+        onExportComplete={() => {
+          setSelectedLeads([]);
+          utils.leads.listByCampaign.invalidate({ campaignId });
+        }}
+      />
     </div>
   );
 }

@@ -264,3 +264,43 @@ See `API_KEYS_REQUIRED.md` for detailed setup instructions.
 - [x] Implement OpenAI test connection handler in backend settings router
 
 - [ ] Debug OpenAI test connection still returning "unknown service" error
+
+
+## CRM Export Integration (HIGH PRIORITY - User Requested)
+- [ ] Design exportLogs database table schema
+- [ ] Create export database functions (createExportLog, getExportHistory, etc.)
+- [ ] Build exports tRPC router with endpoints
+- [ ] Create ExportLeadDialog component with platform selection
+- [ ] Implement field mapping UI
+- [ ] Add HubSpot API integration
+- [ ] Add Salesforce API integration
+- [ ] Add Pipedrive API integration
+- [ ] Add CSV export functionality
+- [ ] Add single lead export button to LeadDetail page
+- [ ] Add bulk export with checkbox selection to LeadsList
+- [ ] Add bulk export to CRMDashboard
+- [ ] Create export history view
+- [ ] Add export status tracking (pending, success, failed)
+- [ ] Test all export integrations
+
+## CRM Feature Implementation (Continuing from Feature 3)
+- [x] Feature 1: Manual Lead Creation Form
+- [x] Feature 2: Task & Follow-up Management
+- [ ] Feature 3: Activity Timeline & History
+- [ ] Feature 4: Contact Management
+- [ ] Feature 5: Deal/Opportunity Pipeline
+- [ ] Feature 6: Advanced Lead Scoring
+- [ ] Feature 7: Email Integration & Tracking
+- [ ] Feature 8: Custom Fields & Properties
+- [ ] Feature 9: Meeting Scheduler
+- [ ] Feature 10: Document Management
+- [ ] Feature 11: Reporting & Analytics Dashboard
+- [ ] Feature 12: Lead Assignment & Routing
+- [ ] Feature 13: Lead Nurturing Campaigns
+- [ ] Feature 14: Mobile-Responsive Views
+- [ ] Feature 15: Workflow Automation
+- [ ] Feature 16: Social Media Integration
+- [ ] Feature 17: Conversation Intelligence
+- [ ] Feature 18: Predictive Analytics
+- [ ] Feature 19: Team Collaboration
+- [ ] Feature 20: Lead Deduplication

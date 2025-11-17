@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE IF NOT EXISTS exportLogs (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  userId INT NOT NULL,\n  platform ENUM('hubspot', 'salesforce', 'pipedrive', 'csv') NOT NULL,\n  exportType ENUM('single', 'bulk') NOT NULL,\n  leadIds JSON NOT NULL,\n  status ENUM('pending', 'success', 'failed') NOT NULL DEFAULT 'pending',\n  recordsExported INT NOT NULL DEFAULT 0,\n  errorMessage TEXT,\n  fieldMapping JSON,\n  exportedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  completedAt TIMESTAMP NULL,\n  FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE\n)",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user gQLdwmQR2CkHDhx.root --database HEwQZPe6tN6hjD39wVLsft --execute CREATE TABLE IF NOT EXISTS exportLogs (\n  id INT AUTO_INCREMENT PRIMARY KEY,\n  userId INT NOT NULL,\n  platform ENUM('hubspot', 'salesforce', 'pipedrive', 'csv') NOT NULL,\n  exportType ENUM('single', 'bulk') NOT NULL,\n  leadIds JSON NOT NULL,\n  status ENUM('pending', 'success', 'failed') NOT NULL DEFAULT 'pending',\n  recordsExported INT NOT NULL DEFAULT 0,\n  errorMessage TEXT,\n  fieldMapping JSON,\n  exportedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  completedAt TIMESTAMP NULL,\n  FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE\n)",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 327
+}

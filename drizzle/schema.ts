@@ -559,6 +559,27 @@ export type Task = typeof tasks.$inferSelect;
 export type InsertTask = typeof tasks.$inferInsert;
 
 // ============================================================================
+// CRM EXPORT LOGS
+// ============================================================================
+
+export const exportLogs = mysqlTable("exportLogs", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  platform: mysqlEnum("platform", ["hubspot", "salesforce", "pipedrive", "csv"]).notNull(),
+  exportType: mysqlEnum("exportType", ["single", "bulk"]).notNull(),
+  leadIds: json("leadIds").notNull(), // Array of lead IDs exported
+  status: mysqlEnum("status", ["pending", "success", "failed"]).default("pending").notNull(),
+  recordsExported: int("recordsExported").default(0).notNull(),
+  errorMessage: text("errorMessage"),
+  fieldMapping: json("fieldMapping"), // Map of source field -> target field
+  exportedAt: timestamp("exportedAt").defaultNow().notNull(),
+  completedAt: timestamp("completedAt"),
+});
+
+export type ExportLog = typeof exportLogs.$inferSelect;
+export type InsertExportLog = typeof exportLogs.$inferInsert;
+
+// ============================================================================
 // GDPR COMPLIANCE
 // ============================================================================
 
