@@ -7,7 +7,7 @@ import { exportLeads, exportToCSV } from "../../services/crmExport";
 export const exportsRouter = router({
   // Get export history
   list: protectedProcedure.query(async ({ ctx }) => {
-    return exportsDb.getExportsByUser(ctx.user.id);
+    return exportsDb.getExportsByUser(ctx.user.id, 50);
   }),
 
   // Get export stats
@@ -33,7 +33,6 @@ export const exportsRouter = router({
         leadIds: input.leadIds,
         status: "pending",
         recordsExported: 0,
-        fieldMapping: input.fieldMapping,
       });
 
       try {
