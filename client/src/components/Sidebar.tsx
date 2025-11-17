@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Home,
-  Settings,
+  Users,
   TrendingUp,
   BarChart3,
   Upload,
@@ -12,11 +12,12 @@ import {
   Phone,
   GitBranch,
   Sparkles,
+  Shield,
+  Settings,
   LogOut,
   Menu,
   X,
-  Users,
-  Shield,
+  CheckSquare,
 } from "lucide-react";
 import { Link, useLocation } from "wouter";
 import { useState } from "react";
@@ -30,6 +31,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: "Home", path: "/", icon: <Home className="h-5 w-5" /> },
   { label: "CRM", path: "/crm", icon: <Users className="h-5 w-5" /> },
+  { label: "Tasks", path: "/tasks", icon: <CheckSquare className="h-5 w-5" /> },
   { label: "Priority Dashboard", path: "/priority", icon: <TrendingUp className="h-5 w-5" /> },
   { label: "Analytics", path: "/analytics", icon: <BarChart3 className="h-5 w-5" /> },
   { label: "Bulk Operations", path: "/bulk", icon: <Upload className="h-5 w-5" /> },

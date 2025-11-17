@@ -262,3 +262,5 @@ See `API_KEYS_REQUIRED.md` for detailed setup instructions.
 - [ ] Investigate why Settings page changes aren't taking effect
 
 - [x] Implement OpenAI test connection handler in backend settings router
+
+- [ ] Debug OpenAI test connection still returning "unknown service" error

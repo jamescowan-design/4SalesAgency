@@ -49,6 +49,7 @@ import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { toast } from "sonner";
 import Breadcrumb from "@/components/Breadcrumb";
+import AddLeadDialog from "@/components/AddLeadDialog";
 
 export default function CRMDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -316,6 +317,8 @@ export default function CRMDashboard() {
                 </SelectContent>
               </Select>
 
+              <AddLeadDialog />
+              
               <Button onClick={exportToCSV} variant="outline">
                 <Download className="mr-2 h-4 w-4" />
                 Export CSV

@@ -534,6 +534,31 @@ export type InsertEmailSequenceEnrollment = typeof emailSequenceEnrollments.$inf
 
 
 // ============================================================================
+// TASK MANAGEMENT
+// ============================================================================
+
+export const tasks = mysqlTable("tasks", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull().references(() => users.id, { onDelete: "cascade" }),
+  leadId: int("leadId").references(() => leads.id, { onDelete: "cascade" }),
+  campaignId: int("campaignId").references(() => campaigns.id, { onDelete: "cascade" }),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  taskType: mysqlEnum("taskType", ["call", "email", "meeting", "follow_up", "research", "other"]).notNull(),
+  priority: mysqlEnum("priority", ["low", "medium", "high", "urgent"]).default("medium").notNull(),
+  status: mysqlEnum("status", ["pending", "in_progress", "completed", "cancelled"]).default("pending").notNull(),
+  dueDate: timestamp("dueDate"),
+  completedAt: timestamp("completedAt"),
+  reminderSent: boolean("reminderSent").default(false).notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Task = typeof tasks.$inferSelect;
+export type InsertTask = typeof tasks.$inferInsert;
+
+// ============================================================================
 // GDPR COMPLIANCE
 // ============================================================================
 

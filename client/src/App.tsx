@@ -26,6 +26,7 @@ import WorkflowAutomation from "@/pages/WorkflowAutomation";
 import VoiceCalling from "@/pages/VoiceCalling";
 import Attribution from "@/pages/Attribution";
 import LeadEnrichment from "@/pages/LeadEnrichment";
+import Tasks from "@/pages/Tasks";
 
 function Router() {
   return (
@@ -49,6 +50,7 @@ function Router() {
       <Route path="/voice" component={VoiceCalling} />
       <Route path="/attribution" component={Attribution} />
       <Route path="/enrichment" component={LeadEnrichment} />
+      <Route path="/tasks" component={Tasks} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

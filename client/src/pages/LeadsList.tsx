@@ -22,6 +22,7 @@ import { trpc } from "@/lib/trpc";
 import { ArrowLeft, Search, Filter, Mail, Phone, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "wouter";
+import AddLeadDialog from "@/components/AddLeadDialog";
 
 export default function LeadsList() {
   const params = useParams();
@@ -150,7 +151,8 @@ export default function LeadsList() {
         {/* Search and Filters */}
         <Card className="mb-6">
           <CardContent className="pt-6">
-            <div className="flex gap-4">
+            <div className="flex gap-4 items-center">
+              <AddLeadDialog campaignId={campaignId} />
               <div className="flex-1 relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
